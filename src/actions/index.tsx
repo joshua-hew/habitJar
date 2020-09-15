@@ -12,7 +12,3 @@ export function create_habit(habitName: string) {
     };
   }
 }
-
-const person = {
-  first: name,
-};
