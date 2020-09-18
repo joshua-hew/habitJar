@@ -1,34 +1,18 @@
 import { StatusBar } from "expo-status-bar";
 import React, { Component } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { createStore } from "redux";
-import { connect } from "react-redux";
+import store from "./src/store/store";
 import { Provider } from "react-redux";
-import SimpleCounter from "./src/components/SimpleCounter";
-
-const initialState = {
-  counter: 40,
-};
-
-const reducer = (state = initialState, action: { type: string }) => {
-  switch (action.type) {
-    case "INCREASE_COUNTER":
-      return { counter: state.counter + 1 };
-    case "DECREASE_COUNTER":
-      return { counter: state.counter - 1 };
-  }
-
-  return state;
-};
-
-const store = createStore(reducer);
+import { SimpleHabitList } from "./src/components/SimpleHabitList";
+import { Counter } from "./src/components/Counter";
 
 const App = () => {
   return (
     <Provider store={store}>
       <View style={styles.container}>
         <StatusBar style="auto" />
-        <SimpleCounter />
+        <Counter />
+        <SimpleHabitList />
       </View>
     </Provider>
   );
