@@ -4,6 +4,7 @@ export const habitSlice = createSlice({
   name: "habit",
   initialState: {
     habit: "No Habit",
+    habits: [""],
   },
   reducers: {
     changeHabit: (state, action) => {
@@ -17,3 +18,14 @@ export const { changeHabit } = habitSlice.actions;
 export default habitSlice.reducer;
 
 export const selectHabit = (state: any) => state.habits.habit;
+export const selectHabits = (state: any) => state.habits.habits;
+
+export interface habitInterface {
+  key: string;
+  history: {
+    [date: string]: {
+      goal: number;
+      done: number;
+    };
+  };
+}
