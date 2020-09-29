@@ -10,11 +10,18 @@ import {
   FlatList,
 } from "react-native";
 import { increment } from "../features/counterSlice";
+import { NavigationContainer, useLinkProps } from "@react-navigation/native";
 
-export const HomePage = () => {
+interface HomeScreenProps {
+  navigation: {};
+  route: {};
+}
+
+export const HomeScreen = (props: HomeScreenProps) => {
   const habits = useSelector(selectHabits);
   const dispatch = useDispatch();
   const [text, setText] = useState("");
+  console.log(props);
 
   // TODO: finish design of calendarBar + functionality
   // TODO: Change basic text -> unordered list of habits
@@ -27,6 +34,7 @@ export const HomePage = () => {
       <GrayBar />
       <CalendarBar />
       <HabitList />
+      <CreateHabitButton navigation={props.navigation} />
     </View>
   );
 };
@@ -156,6 +164,18 @@ const HabitCard = (props: habitCardProps) => {
   );
 };
 
+interface CreateHabitButtonProps {
+  navigation: any;
+}
+
+const CreateHabitButton = (props: CreateHabitButtonProps) => {
+  return (
+    <TouchableOpacity onPress={() => props.navigation.navigate("CreateHabit")}>
+      <Text>+</Text>
+    </TouchableOpacity>
+  );
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -204,6 +224,6 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomePage;
+export default HomeScreen;
 
 // helper functions
