@@ -22,6 +22,7 @@ export const selectHabits = (state: any) => state.habits.habits;
 
 export interface habitInterface {
   key: string;
+  color: string;
   history: {
     [date: string]: {
       goal: number;

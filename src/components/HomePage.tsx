@@ -9,6 +9,7 @@ import {
   TextInput,
   FlatList,
 } from "react-native";
+import { increment } from "../features/counterSlice";
 
 export const HomePage = () => {
   const habits = useSelector(selectHabits);
@@ -17,6 +18,8 @@ export const HomePage = () => {
 
   // TODO: finish design of calendarBar + functionality
   // TODO: Change basic text -> unordered list of habits
+  // TODO: change logic in caclulateProgress() to get the day of the current view
+  // TODO: implement increment function
 
   return (
     <View style={styles.container}>
@@ -59,11 +62,23 @@ const HabitList = () => {
   return (
     <View style={styles.habitListContainer}>
       <FlatList
-        style={styles.flatListContainer}
+        contentContainerStyle={styles.testContainer}
         data={[
-          { key: "Exercise", history: { "9-23-2020": { goal: 1, done: 1 } } },
-          { key: "Study", history: { "9-23-2020": { goal: 1, done: 0 } } },
-          { key: "Meditate", history: { "9-23-2020": { goal: 2, done: 1 } } },
+          {
+            key: "Exercise",
+            color: "#FA8072",
+            history: { "9-23-2020": { goal: 1, done: 1 } },
+          },
+          {
+            key: "Study",
+            color: "blue",
+            history: { "9-23-2020": { goal: 1, done: 0 } },
+          },
+          {
+            key: "Meditate",
+            color: "#50E3C2",
+            history: { "9-23-2020": { goal: 2, done: 1 } },
+          },
         ]}
         renderItem={({ item }) => <HabitCard habit={item} />}
       />
@@ -77,10 +92,67 @@ interface habitCardProps {
 
 const HabitCard = (props: habitCardProps) => {
   const h = props.habit;
+  const calculateProgress = () => {
+    let day = "9-23-2020";
+    let progress: number = h.history[day].done / h.history[day].goal;
+    progress = progress * 100;
+    console.log(`progress: ${progress}`);
+    return progress;
+  };
+  const progress = calculateProgress();
+
+  const increment = () => {
+    console.log("incrementing habit count");
+  };
+
+  const cardStyles = StyleSheet.create({
+    habitCardContainer: {
+      minHeight: 83,
+      marginLeft: "5%",
+      marginRight: "5%",
+      marginTop: 30,
+      borderRadius: 15,
+      backgroundColor: "#E6E6E6",
+    },
+    progressBar: {
+      position: "absolute",
+      height: "100%",
+      width: `${progress}%`,
+      borderTopLeftRadius: 15,
+      borderBottomLeftRadius: 15,
+      borderTopRightRadius: progress === 100 ? 15 : 0,
+      borderBottomRightRadius: progress === 100 ? 15 : 0,
+      backgroundColor: h.color,
+    },
+
+    habitName: {
+      position: "absolute",
+      marginTop: "9%",
+      marginLeft: "10%",
+      fontWeight: "bold",
+      fontSize: 18,
+      opacity: 0.9,
+    },
+
+    progressCounter: {
+      position: "relative",
+      marginTop: "9%",
+      marginLeft: "75%",
+      fontWeight: "bold",
+      fontSize: 18,
+      opacity: 0.9,
+    },
+  });
+
   return (
-    <View>
-      <Text>{h.key}</Text>
-    </View>
+    <TouchableOpacity
+      style={cardStyles.habitCardContainer}
+      onPress={() => increment()}
+    >
+      <View style={cardStyles.progressBar}></View>
+      <Text style={cardStyles.habitName}>{h.key}</Text>
+      <Text style={cardStyles.progressCounter}>0 / 0</Text>
+    </TouchableOpacity>
   );
 };
 
@@ -107,6 +179,8 @@ const styles = StyleSheet.create({
   calendarContainer: {
     backgroundColor: "#fff",
     marginTop: 25,
+    marginBottom: 25,
+    paddingBottom: 25,
   },
   calendarText: {
     fontWeight: "bold",
@@ -122,9 +196,11 @@ const styles = StyleSheet.create({
   },
   habitListContainer: {
     backgroundColor: "blue",
+    flex: 1,
   },
-  flatListContainer: {
+  testContainer: {
     backgroundColor: "purple",
+    flex: 1,
   },
 });
 
