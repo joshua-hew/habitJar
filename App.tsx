@@ -19,14 +19,14 @@ const App = () => {
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen
-            name="Home"
-            component={HomeScreen}
+            name="CreateHabit"
+            component={CreateHabitScreen}
             options={{ headerShown: false }}
           />
           <Stack.Screen
-            name="CreateHabit"
-            component={CreateHabitScreen}
-            options={{ headerShown: true }}
+            name="Home"
+            component={HomeScreen}
+            options={{ headerShown: false }}
           />
         </Stack.Navigator>
       </NavigationContainer>

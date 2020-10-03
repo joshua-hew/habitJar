@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "green",
     opacity: 1,
-    paddingTop: 60,
+    paddingTop: 60, // TODO: change to 30
     paddingLeft: 20,
     paddingRight: 20,
   },
