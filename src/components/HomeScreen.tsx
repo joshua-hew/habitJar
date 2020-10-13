@@ -10,23 +10,37 @@ import {
   FlatList,
 } from "react-native";
 import { increment } from "../features/counterSlice";
+import { NavigationContainer, useLinkProps } from "@react-navigation/native";
+import {getTodaysDate} from "./HelperFunctions"
 
-export const HomePage = () => {
+interface HomeScreenProps {
+  navigation: {};
+  route: {};
+}
+
+export const HomeScreen = (props: HomeScreenProps) => {
   const habits = useSelector(selectHabits);
   const dispatch = useDispatch();
   const [text, setText] = useState("");
+
+  const today = new Date()
+  const [curSelectedDate, setCurSelectedDate] = useState(today);
+  //console.log(curSelectedDate)
 
   // TODO: finish design of calendarBar + functionality
   // TODO: Change basic text -> unordered list of habits
   // TODO: change logic in caclulateProgress() to get the day of the current view
   // TODO: implement increment function
+  
+  // Design: keep history as entries / snapshots that record certain bits of info about the state of the habit like done and goal (at the time of recording)
 
   return (
     <View style={styles.container}>
       <Title />
       <GrayBar />
-      <CalendarBar />
-      <HabitList />
+      <CalendarBar curSelectedDate={curSelectedDate} setCurSelectedDate={setCurSelectedDate}/>
+      <HabitList habits={habits}/>
+      <CreateHabitButton navigation={props.navigation} />
     </View>
   );
 };
@@ -43,43 +57,73 @@ const GrayBar = () => {
   return <View style={styles.grayBar}></View>;
 };
 
-const CalendarBar = () => {
+const CalendarBar = (props: any) => {
+  const curSelectedDate = props.curSelectedDate;
+  const setCurSelectedDate = props.setCurSelectedDate;
+  const leftArrow = "<"
+  const rightArrow = ">"
+  const dayNumber = curSelectedDate.getDate()
+
+  const decrementDay = () => {
+    let nextDay = new Date(curSelectedDate.getTime()-1000*60*60*24)
+    setCurSelectedDate(nextDay)
+  }
+  const incrementDay = () => {
+    let nextDay = new Date(curSelectedDate.getTime()+1000*60*60*24)
+    setCurSelectedDate(nextDay)
+    
+  }
   return (
     <View style={styles.calendarContainer}>
       <Text style={styles.calendarText}>TODAY</Text>
       <View style={styles.calendarDays}>
-        <Text>5</Text>
-        <Text>6</Text>
-        <Text>7</Text>
-        <Text>8</Text>
-        <Text>9</Text>
+        <TouchableOpacity onPress={decrementDay}>
+          <Text>{leftArrow}</Text>
+        </TouchableOpacity>
+        <Text>{dayNumber - 2}</Text>
+        <Text>{dayNumber - 1}</Text>
+        <Text>{dayNumber}</Text>
+        <Text>{dayNumber + 1}</Text>
+        <Text>{dayNumber + 2}</Text>
+        <TouchableOpacity onPress={incrementDay}>
+          <Text>{rightArrow}</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 };
 
-const HabitList = () => {
-  return (
-    <View style={styles.habitListContainer}>
-      <FlatList
-        contentContainerStyle={styles.testContainer}
-        data={[
+/**
+ * [
           {
             key: "Exercise",
             color: "#FA8072",
-            history: { "9-23-2020": { goal: 1, done: 1 } },
+            goal: 1,
+            history: { "9-23-2020": { done: 1 } },
           },
           {
             key: "Study",
             color: "blue",
-            history: { "9-23-2020": { goal: 1, done: 0 } },
+            goal: 1,
+            history: { "9-23-2020": { done: 0 } },
           },
           {
             key: "Meditate",
             color: "#50E3C2",
-            history: { "9-23-2020": { goal: 2, done: 1 } },
+            goal: 2,
+            history: { "9-23-2020": { done: 1 } },
           },
-        ]}
+        ] 
+ */
+
+const HabitList = (props: any) => {
+  const habits = props.habits;
+  console.log(`habits: ${habits}`)
+  return (
+    <View style={styles.habitListContainer}>
+      <FlatList
+        contentContainerStyle={styles.testContainer}
+        data={habits}
         renderItem={({ item }) => <HabitCard habit={item} />}
       />
     </View>
@@ -90,16 +134,32 @@ interface habitCardProps {
   habit: habitInterface;
 }
 
-const HabitCard = (props: habitCardProps) => {
+const MockHabitCard = (props: any) => {
+  const h = props.habit
+  
+  return (
+    <View>
+      <Text>Hello</Text>
+    </View>
+  )
+}
+
+const HabitCard = (props: any) => {
   const h = props.habit;
-  const calculateProgress = () => {
-    let day = "9-23-2020";
-    let progress: number = h.history[day].done / h.history[day].goal;
+  const today_string = getTodaysDate()
+  
+  const calculateProgress = (habit: any, date: string) => {    
+    // If habit doesn't have an entry for that date
+    if (date in habit.history === false) {
+      return 0
+    }
+
+    let progress: number = habit.history[date].done / habit.history[date].goal;
     progress = progress * 100;
     console.log(`progress: ${progress}`);
     return progress;
   };
-  const progress = calculateProgress();
+  const progress = calculateProgress(h, today_string);
 
   const increment = () => {
     console.log("incrementing habit count");
@@ -122,7 +182,7 @@ const HabitCard = (props: habitCardProps) => {
       borderBottomLeftRadius: 15,
       borderTopRightRadius: progress === 100 ? 15 : 0,
       borderBottomRightRadius: progress === 100 ? 15 : 0,
-      backgroundColor: h.color,
+      backgroundColor: h.habitColor,
     },
 
     habitName: {
@@ -156,12 +216,25 @@ const HabitCard = (props: habitCardProps) => {
   );
 };
 
+interface CreateHabitButtonProps {
+  navigation: any;
+}
+
+const CreateHabitButton = (props: CreateHabitButtonProps) => {
+  return (
+    <TouchableOpacity onPress={() => props.navigation.navigate("CreateHabit")}>
+      <Text>+</Text>
+    </TouchableOpacity>
+  );
+};
+
 const styles = StyleSheet.create({
   container: {
+    //backgroundColor: "green",
+    backgroundColor: "white",
     flex: 1,
-    backgroundColor: "green",
     opacity: 1,
-    paddingTop: 60,
+    paddingTop: 60, // TODO: change to 30
     paddingLeft: 20,
     paddingRight: 20,
   },
@@ -195,15 +268,15 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   habitListContainer: {
-    backgroundColor: "blue",
+    //backgroundColor: "blue",
     flex: 1,
   },
   testContainer: {
-    backgroundColor: "purple",
+    //backgroundColor: "purple",
     flex: 1,
   },
 });
 
-export default HomePage;
+export default HomeScreen;
 
 // helper functions
