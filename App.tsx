@@ -17,17 +17,18 @@ const App = () => {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen
+        <Stack.Navigator>          
+        <Stack.Screen
             name="CreateHabit"
             component={CreateHabitScreen}
             options={{ headerShown: false }}
-          />
+          />     
           <Stack.Screen
             name="Home"
             component={HomeScreen}
             options={{ headerShown: false }}
-          />
+          />          
+               
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
