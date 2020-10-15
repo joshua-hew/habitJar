@@ -9,3 +9,13 @@ export const getTodaysDate = () => {
 
     return today_string
 }
+
+export const dateToString = (date: Date) => {
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+    const yyyy = date.getFullYear();
+
+    const date_string = mm + '-' + dd + '-' + yyyy;
+
+    return date_string
+}

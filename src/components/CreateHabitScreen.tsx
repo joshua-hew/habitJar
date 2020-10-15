@@ -62,6 +62,7 @@ export const CreateHabitScreen = (props: any) => {
       name: "Exercises",
       goal: 3,
       habitColor: "#D0021B",
+      timePeriod: "Weekly"
     }
     dispatch(createHabit(testFormData))
   };
