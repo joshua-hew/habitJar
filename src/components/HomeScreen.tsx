@@ -1,6 +1,7 @@
-import React, { Component, useState } from "react";
+import React, { Component, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { selectHabits, habitInterface } from "../features/habitSlice";
+import { selectHabits, habitInterface, increment, decrement } from "../features/habitSlice";
+import { calculateHabitProgress } from "../features/habitSlice";
 import {
   StyleSheet,
   Text,
@@ -9,9 +10,9 @@ import {
   TextInput,
   FlatList,
 } from "react-native";
-import { increment } from "../features/counterSlice";
 import { NavigationContainer, useLinkProps } from "@react-navigation/native";
-import {getTodaysDate} from "./HelperFunctions"
+import {getTodaysDate, dateToString} from "./HelperFunctions"
+import { isSameDay, isToday, isTomorrow, isYesterday, getDay, getDate, format } from "date-fns";
 
 interface HomeScreenProps {
   navigation: {};
@@ -25,7 +26,7 @@ export const HomeScreen = (props: HomeScreenProps) => {
 
   const today = new Date()
   const [curSelectedDate, setCurSelectedDate] = useState(today);
-  //console.log(curSelectedDate)
+  //console.log("curSelectedDate:", curSelectedDate)
 
   // TODO: finish design of calendarBar + functionality
   // TODO: Change basic text -> unordered list of habits
@@ -38,8 +39,8 @@ export const HomeScreen = (props: HomeScreenProps) => {
     <View style={styles.container}>
       <Title />
       <GrayBar />
-      <CalendarBar curSelectedDate={curSelectedDate} setCurSelectedDate={setCurSelectedDate}/>
-      <HabitList habits={habits}/>
+      <CalendarBar today={today} curSelectedDate={curSelectedDate} setCurSelectedDate={setCurSelectedDate}/>
+      <HabitList habits={habits} curSelectedDate={curSelectedDate}/>
       <CreateHabitButton navigation={props.navigation} />
     </View>
   );
@@ -58,15 +59,32 @@ const GrayBar = () => {
 };
 
 const CalendarBar = (props: any) => {
+  const today = props.today
   const curSelectedDate = props.curSelectedDate;
   const setCurSelectedDate = props.setCurSelectedDate;
   const leftArrow = "<"
   const rightArrow = ">"
   const dayNumber = curSelectedDate.getDate()
+  
+  const displayDateText = (today: Date, curSelectedDate: Date) => {
+    // Today
+    if(isSameDay(today, curSelectedDate)) return "TODAY"
+
+    // Tomorrow
+    else if(isTomorrow(curSelectedDate)) return "TOMORROW"
+
+    // Yesterday
+    else if(isYesterday(curSelectedDate)) return "YESTERDAY"
+
+    else {
+      return format(curSelectedDate, "E, MMM do")
+    }
+  }
+  const dateText = displayDateText(today, curSelectedDate)
 
   const decrementDay = () => {
-    let nextDay = new Date(curSelectedDate.getTime()-1000*60*60*24)
-    setCurSelectedDate(nextDay)
+    let prevDay = new Date(curSelectedDate.getTime()-1000*60*60*24)
+    setCurSelectedDate(prevDay)
   }
   const incrementDay = () => {
     let nextDay = new Date(curSelectedDate.getTime()+1000*60*60*24)
@@ -75,7 +93,7 @@ const CalendarBar = (props: any) => {
   }
   return (
     <View style={styles.calendarContainer}>
-      <Text style={styles.calendarText}>TODAY</Text>
+      <Text style={styles.calendarText}>{dateText}</Text>
       <View style={styles.calendarDays}>
         <TouchableOpacity onPress={decrementDay}>
           <Text>{leftArrow}</Text>
@@ -118,13 +136,16 @@ const CalendarBar = (props: any) => {
 
 const HabitList = (props: any) => {
   const habits = props.habits;
-  console.log(`habits: ${habits}`)
+  const curSelectedDate = props.curSelectedDate
+  console.log(habits)
+  //console.log("HabitList cur date:", curSelectedDate)
   return (
     <View style={styles.habitListContainer}>
       <FlatList
         contentContainerStyle={styles.testContainer}
         data={habits}
-        renderItem={({ item }) => <HabitCard habit={item} />}
+        renderItem={({ item }) => <HabitCard habit={item} curSelectedDate={curSelectedDate}/>}
+        extraData={curSelectedDate} //This is to ensure that the HabitCard updates everytime curSelectedDate changes
       />
     </View>
   );
@@ -146,23 +167,23 @@ const MockHabitCard = (props: any) => {
 
 const HabitCard = (props: any) => {
   const h = props.habit;
-  const today_string = getTodaysDate()
+  const dispatch = useDispatch();
+  const curSelectedDate = props.curSelectedDate
+  const [progress, done, goal] = calculateHabitProgress(h, curSelectedDate);
   
-  const calculateProgress = (habit: any, date: string) => {    
-    // If habit doesn't have an entry for that date
-    if (date in habit.history === false) {
-      return 0
-    }
-
-    let progress: number = habit.history[date].done / habit.history[date].goal;
-    progress = progress * 100;
-    console.log(`progress: ${progress}`);
-    return progress;
+  const incrementHabitCount = (h: any, date: Date) => {
+    //console.log("increment. date is:", date)
+    const payload: any = {}
+    payload.habitIndex = h.key
+    payload.targetDate = date.toString()  // actions should accept serializable values
+    dispatch(increment(payload))
   };
-  const progress = calculateProgress(h, today_string);
 
-  const increment = () => {
-    console.log("incrementing habit count");
+  const decrementHabitCount = (h: any, date: Date) => {
+    const payload: any = {}
+    payload.habitIndex = h.key
+    payload.targetDate = date.toString()  // actions should accept serializable values
+    dispatch(decrement(payload))
   };
 
   const cardStyles = StyleSheet.create({
@@ -205,14 +226,21 @@ const HabitCard = (props: any) => {
   });
 
   return (
-    <TouchableOpacity
-      style={cardStyles.habitCardContainer}
-      onPress={() => increment()}
-    >
-      <View style={cardStyles.progressBar}></View>
-      <Text style={cardStyles.habitName}>{h.key}</Text>
-      <Text style={cardStyles.progressCounter}>0 / 0</Text>
-    </TouchableOpacity>
+    <View>
+      <TouchableOpacity
+        style={cardStyles.habitCardContainer}
+        onPress={() => incrementHabitCount(h, curSelectedDate)}
+      >
+        <View style={cardStyles.progressBar}></View>
+        <Text style={cardStyles.habitName}>{h.name}</Text>
+        <Text style={cardStyles.progressCounter}>{done} / {goal}</Text>
+      </TouchableOpacity>
+      
+      <TouchableOpacity onPress={() => decrementHabitCount(h, curSelectedDate)}>
+      <Text>Decrement</Text>
+      </TouchableOpacity>
+    </View>
+    
   );
 };
 
