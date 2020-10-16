@@ -21,7 +21,7 @@ export const CreateHabitScreen = (props: any) => {
   const dispatch = useDispatch();
 
   // Form state
-  const [name, onChangeName] = React.useState("");
+  const [name, setName] = React.useState("");
   const [description, setDescription] = React.useState("");
   const [timePeriod, setTimePeriod] = React.useState("Daily");
   const [goal, setGoal] = React.useState(0);
@@ -37,6 +37,10 @@ export const CreateHabitScreen = (props: any) => {
   const [habitColor, setHabitColor] = React.useState("#D0021B");
   const [reminders, setReminders] = React.useState("");
   const [msg, onChangeMsg] = React.useState("");
+
+  // Errors (track if input to fields are invalid)
+  const [nameError, setNameError] = React.useState("");
+  const [descriptionError, setDescriptionError] = React.useState("");
 
   const data = {
     name: name,
@@ -70,6 +74,7 @@ export const CreateHabitScreen = (props: any) => {
 /**
  * <TrackHabitOn days={days} setDays={setDays} />
  * <TimePeriod timePeriod={timePeriod} setTimePeriod={setTimePeriod} />
+ * 
  */
 
   return (
@@ -79,8 +84,8 @@ export const CreateHabitScreen = (props: any) => {
           preLoadedOnSubmit={() => onSubmit(data)}
           navigation={props.navigation}
         />
-        <Name name={name} onChangeName={onChangeName} />
-        <Description description={description} setDescription={setDescription}/>        
+        <Name name={name} setName={setName} nameError={nameError} setNameError={setNameError}/>
+        <Description description={description} setDescription={setDescription} descriptionError={descriptionError} setDescriptionError={setDescriptionError}/>        
         <Goal goal={goal} setGoal={setGoal} timePeriod={timePeriod} setTimePeriod={setTimePeriod}/>        
         <HabitColor habitColor={habitColor} setHabitColor={setHabitColor} />
         <Reminders />
@@ -97,8 +102,6 @@ export const CreateHabitScreen = (props: any) => {
 const Header = (props: any) => {
   const preLoadedOnSubmit = props.preLoadedOnSubmit;
   const formData = props.formData;
-
-  const onPressCancel = () => {};
 
   return (
     <View style={styles.headerContainer}>
@@ -124,7 +127,24 @@ const Header = (props: any) => {
 
 const Name = (props: any) => {
   const name = props.name;
-  const onChangeName = props.onChangeName;
+  const setName = props.setName;
+  const nameError = props.nameError;
+  const setNameError = props.setNameError;
+  const nameErrorExists: boolean = nameError !== ""
+  const charLimit = 2
+  
+  const onChangeText = (text: string) => {
+    // if user input is too long, do not update name field.
+    if (text.length > charLimit) {
+      setNameError(`Must be less than ${charLimit} characters`)
+    }
+    
+    // if the input text, clear the name error (if exists) and update name field
+    else {
+      if(nameErrorExists) setNameError("")
+      setName(text)
+    }
+  }
 
   return (
     <View style={styles.fieldContainer}>
@@ -132,27 +152,47 @@ const Name = (props: any) => {
       <TextInput
         style={styles.nameField}
         placeholder={"Exercise, Quit Pressing Snooze"}
-        onChangeText={(text) => onChangeName(text)}
+        onChangeText={(text) => onChangeText(text)}
         value={name}
       ></TextInput>
+      <View>{nameErrorExists ? <Text>{nameError}</Text> : null}</View>
     </View>
+  
   );
 };
 
 const Description = (props: any) => {
   const description = props.description;
   const setDescription = props.setDescription;
+  const descriptionError = props.descriptionError;
+  const setDescriptionError = props.setDescriptionError;
+  const descriptionErrorExists: boolean = descriptionError !== ""
+  const charLimit = 2
+
+  const onChangeText = (text: string) => {
+    // if user input is too long, do not updatefield.
+    if (text.length > charLimit) {
+      setDescriptionError(`Must be less than ${charLimit} characters`)
+    }
+    
+    // if the input text is valid, clear the error (if exists) and update field
+    else {
+      if(descriptionErrorExists) setDescriptionError("")
+      setDescription(text)
+    }
+  }
 
   return (
     <View style={styles.fieldContainer}>
       <Text style={styles.fieldTitle}>Description</Text>
       <TextInput
           style={styles.descriptionField}
-          onChangeText={(text) => setDescription(text)}
+          onChangeText={(text) => onChangeText(text)}
           value={description}
           multiline={true}
         >        
         </TextInput>
+        <View>{descriptionErrorExists ? <Text>{descriptionError}</Text> : null}</View>
     </View>
   )
 }
@@ -228,6 +268,7 @@ const Goal = (props: goalProps) => {
   const string_goal = goal === 0 ? "" : goal.toString();
   const setGoal = props.setGoal;
   const timePeriod = props.timePeriod;
+  const setTimePeriod = props.setTimePeriod
   let per = "";
 
   switch (timePeriod) {
@@ -271,6 +312,19 @@ const Goal = (props: goalProps) => {
     </View>
   );
 };
+
+/**
+ * <Picker
+          selectedValue={timePeriod}
+          style={{height: 50, width: 100}}
+          onValueChange={(itemValue, itemIndex) => {setTimePeriod(itemValue.toString())}}
+        >
+          <Picker.Item label="Day" value="Daily"/>
+          <Picker.Item label="Week" value="Weekly"/>
+          <Picker.Item label="Month" value="Monthly"/>
+          <Picker.Item label="Year" value="Yearly"/>
+        </Picker>
+ */
 
 interface trackHabitOnProps {
   days: {};
