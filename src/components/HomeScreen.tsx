@@ -40,7 +40,7 @@ export const HomeScreen = (props: HomeScreenProps) => {
       <Title />
       <GrayBar />
       <CalendarBar today={today} curSelectedDate={curSelectedDate} setCurSelectedDate={setCurSelectedDate}/>
-      <HabitList habits={habits} curSelectedDate={curSelectedDate}/>
+      <HabitList habits={habits} curSelectedDate={curSelectedDate} navigation={props.navigation}/>
       <CreateHabitButton navigation={props.navigation} />
     </View>
   );
@@ -137,6 +137,7 @@ const CalendarBar = (props: any) => {
 const HabitList = (props: any) => {
   const habits = props.habits;
   const curSelectedDate = props.curSelectedDate
+  const navigation = props.navigation
   console.log(habits)
   //console.log("HabitList cur date:", curSelectedDate)
   return (
@@ -144,7 +145,7 @@ const HabitList = (props: any) => {
       <FlatList
         contentContainerStyle={styles.testContainer}
         data={habits}
-        renderItem={({ item }) => <HabitCard habit={item} curSelectedDate={curSelectedDate}/>}
+        renderItem={({ item }) => <HabitCard habit={item} curSelectedDate={curSelectedDate} navigation={navigation}/>}
         extraData={curSelectedDate} //This is to ensure that the HabitCard updates everytime curSelectedDate changes
       />
     </View>
@@ -156,16 +157,6 @@ interface habitCardProps {
 }
 
 const MockHabitCard = (props: any) => {
-  const h = props.habit
-  
-  return (
-    <View>
-      <Text>Hello</Text>
-    </View>
-  )
-}
-
-const HabitCard = (props: any) => {
   const h = props.habit;
   const dispatch = useDispatch();
   const curSelectedDate = props.curSelectedDate
@@ -224,7 +215,7 @@ const HabitCard = (props: any) => {
       opacity: 0.9,
     },
   });
-
+  
   return (
     <View>
       <TouchableOpacity
@@ -239,6 +230,100 @@ const HabitCard = (props: any) => {
       <TouchableOpacity onPress={() => decrementHabitCount(h, curSelectedDate)}>
       <Text>Decrement</Text>
       </TouchableOpacity>
+    </View>
+    
+  );
+}
+
+const HabitCard = (props: any) => {
+  const h = props.habit;
+  const dispatch = useDispatch();
+  const curSelectedDate = props.curSelectedDate
+  const [progress, done, goal] = calculateHabitProgress(h, curSelectedDate);
+  
+  const incrementHabitCount = (h: any, date: Date) => {
+    //console.log("increment. date is:", date)
+    const payload: any = {}
+    payload.habitIndex = h.key
+    payload.targetDate = date.toString()  // actions should accept serializable values
+    dispatch(increment(payload))
+  };
+
+  const decrementHabitCount = (h: any, date: Date) => {
+    const payload: any = {}
+    payload.habitIndex = h.key
+    payload.targetDate = date.toString()  // actions should accept serializable values
+    dispatch(decrement(payload))
+  };
+
+  const cardStyles = StyleSheet.create({
+    habitCardContainer: {
+      flexDirection: "row",
+      minHeight: 83,
+      marginLeft: "5%",
+      marginRight: "5%",
+      marginTop: 30,
+      borderRadius: 15,
+      backgroundColor: "#E6E6E6",
+    },
+    habitNameContainer: {
+      flex: 3,
+    },
+
+    progressBar: {
+      position: "absolute",
+      height: "100%",
+      width: `${progress}%`,
+      borderTopLeftRadius: 15,
+      borderBottomLeftRadius: 15,
+      borderTopRightRadius: progress === 100 ? 15 : 0,
+      borderBottomRightRadius: progress === 100 ? 15 : 0,
+      backgroundColor: h.habitColor,
+    },
+
+    habitName: {
+      //backgroundColor: "blue",
+      //flex: 3,
+      marginTop: "9%",
+      marginLeft: "10%",
+      fontWeight: "bold",
+      fontSize: 18,
+      opacity: 0.9,
+    },
+    progressCounterContainer: {
+      //backgroundColor: "green",
+      flex: 1,
+      paddingTop: "5%",
+      paddingLeft: "10%",
+    },
+    progressCounter: {
+      fontWeight: "bold",
+      fontSize: 18,
+      opacity: 0.9,
+    },
+  });
+
+  return (
+    <View>
+      <View style={cardStyles.habitCardContainer}>
+      <View style={cardStyles.progressBar}></View>
+        
+        <TouchableOpacity style={cardStyles.habitNameContainer} onPress={() => props.navigation.navigate("EditHabit", h)}>
+          <Text style={cardStyles.habitName}>{h.name}</Text>
+        </TouchableOpacity>
+        
+      
+        
+        <View style={cardStyles.progressCounterContainer}>
+          <TouchableOpacity onPress={() => incrementHabitCount(h, curSelectedDate)}>
+            <Text>UP</Text>
+          </TouchableOpacity>
+          <Text style={cardStyles.progressCounter}>{done} / {goal}</Text>
+          <TouchableOpacity onPress={() => decrementHabitCount(h, curSelectedDate)}>
+            <Text>DOWN</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
     
   );

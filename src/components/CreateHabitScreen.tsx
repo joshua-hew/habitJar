@@ -21,7 +21,7 @@ export const CreateHabitScreen = (props: any) => {
   const dispatch = useDispatch();
 
   // Form state
-  const [name, onChangeName] = React.useState("");
+  const [name, setName] = React.useState("");
   const [description, setDescription] = React.useState("");
   const [timePeriod, setTimePeriod] = React.useState("Daily");
   const [goal, setGoal] = React.useState(0);
@@ -38,53 +38,108 @@ export const CreateHabitScreen = (props: any) => {
   const [reminders, setReminders] = React.useState("");
   const [msg, onChangeMsg] = React.useState("");
 
-  const data = {
-    name: name,
-    description: description,
-    timePeriod: timePeriod,
-    goal: goal,
-    days: days,
-    habitColor: habitColor,
-    reminders: reminders,
-    msg: msg,
+  // Errors (will be populated when invalid input is discovered)
+  const [nameError, setNameError] = React.useState("");
+  const [descriptionError, setDescriptionError] = React.useState("");
+  const [goalError, setGoalError] = React.useState("");
+  const [msgError, setMsgError] = React.useState("");
+
+  const data = {  // TODO: add reminders
+    name,
+    description,
+    timePeriod,
+    goal,
+    habitColor,
+    msg
   };
 
-  const onSubmit = (formData: any) => {
+  const errors = {
+    nameError,
+    descriptionError,
+    goalError,
+    msgError
+  }
+
+  const onSubmit = (formData: any, formErrors: any) => {  // Todo: error msg for missing mandatory field
     console.log(formData);
 
+    /** 
     // Basic form validation
+    // 1. Check for empty fields
+    const optionalFields = ["description", "msg"]
+    for (const [key, value] of Object.entries(formData)) {
+      if (optionalFields.includes(key)) continue;
+      if (value === "" || value === 0) {
+        console.log(`Cannot save habit. ${key} is empty.`)
+        return
+      }
+    }
+
+    // 2. Check if any error msgs
+    for (const [key, value] of Object.entries(formErrors)) {
+      if (value !== "") {
+        console.log(`Cannot save habit. ${key}: ${value}`)
+        return
+      }
+    }
 
     // Dispatch to store
-    //dispatch(createHabit(formData));
+    dispatch(createHabit(formData));
+    */
 
-    // Test code
-    const testFormData = {
-      name: "Exercises",
-      goal: 3,
+    
+    // Demo code
+    const test1 = {
+      name: "Calisthenics",
+      description: "Workout M,T, Rest, Th, F",
+      timePeriod: "Weekly",
+      goal: 4,
       habitColor: "#D0021B",
-      timePeriod: "Weekly"
+      msg: "I go forward"
+      
     }
-    dispatch(createHabit(testFormData))
+    const test2 = {
+      name: "Help someone with something",
+      description: "Big or small, look for a way to help someone",
+      timePeriod: "Weekly",
+      goal: 1,
+      habitColor: "#F8E71C",
+      msg: "Responsibility"
+      
+    }
+    const test3 = {
+      name: "Read book for 30 min",
+      timePeriod: "Daily",
+      goal: 1,
+      habitColor: "#D0021B",
+      
+    }
+    dispatch(createHabit(test1))
+    dispatch(createHabit(test2))
+    dispatch(createHabit(test3))
+    
   };
 
 /**
  * <TrackHabitOn days={days} setDays={setDays} />
  * <TimePeriod timePeriod={timePeriod} setTimePeriod={setTimePeriod} />
+ * 
  */
 
   return (
     <KeyboardAwareScrollView style={styles.scrollViewContainer}>
       <View style={styles.container}>
         <Header
-          preLoadedOnSubmit={() => onSubmit(data)}
+          preLoadedOnSubmit={() => onSubmit(data, errors)}
           navigation={props.navigation}
         />
-        <Name name={name} onChangeName={onChangeName} />
-        <Description description={description} setDescription={setDescription}/>        
-        <Goal goal={goal} setGoal={setGoal} timePeriod={timePeriod} setTimePeriod={setTimePeriod}/>        
+        <Name name={name} setName={setName} nameError={nameError} setNameError={setNameError}/>
+        <Description description={description} setDescription={setDescription} descriptionError={descriptionError} setDescriptionError={setDescriptionError}/>        
+        <TimePeriod timePeriod={timePeriod} setTimePeriod={setTimePeriod}/>
+        <Goal goal={goal} setGoal={setGoal} timePeriod={timePeriod} goalError={goalError} setGoalError={setGoalError}/>        
         <HabitColor habitColor={habitColor} setHabitColor={setHabitColor} />
         <Reminders />
-        <MotivationalMsg msg={msg} onChangeMsg={onChangeMsg} />
+        <MotivationalMsg msg={msg} onChangeMsg={onChangeMsg} msgError={msgError} setMsgError={setMsgError}/>
       </View>
     </KeyboardAwareScrollView>
   );
@@ -97,8 +152,6 @@ export const CreateHabitScreen = (props: any) => {
 const Header = (props: any) => {
   const preLoadedOnSubmit = props.preLoadedOnSubmit;
   const formData = props.formData;
-
-  const onPressCancel = () => {};
 
   return (
     <View style={styles.headerContainer}>
@@ -124,7 +177,24 @@ const Header = (props: any) => {
 
 const Name = (props: any) => {
   const name = props.name;
-  const onChangeName = props.onChangeName;
+  const setName = props.setName;
+  const nameError = props.nameError;
+  const setNameError = props.setNameError;
+  const nameErrorExists: boolean = nameError !== ""
+  const charLimit = 30
+  
+  const onChangeText = (text: string) => {
+    // if user input is too long, do not update name field.
+    if (text.length > charLimit) {
+      setNameError(`Name cannot exceed ${charLimit} characters`)
+    }
+    
+    // if the input text, clear the name error (if exists) and update name field
+    else {
+      if(nameErrorExists) setNameError("")
+      setName(text)
+    }
+  }
 
   return (
     <View style={styles.fieldContainer}>
@@ -132,27 +202,47 @@ const Name = (props: any) => {
       <TextInput
         style={styles.nameField}
         placeholder={"Exercise, Quit Pressing Snooze"}
-        onChangeText={(text) => onChangeName(text)}
+        onChangeText={(text) => onChangeText(text)}
         value={name}
       ></TextInput>
+      <View>{nameErrorExists ? <Text style={styles.errorText}>{nameError}</Text> : null}</View>
     </View>
+  
   );
 };
 
 const Description = (props: any) => {
   const description = props.description;
   const setDescription = props.setDescription;
+  const descriptionError = props.descriptionError;
+  const setDescriptionError = props.setDescriptionError;
+  const descriptionErrorExists: boolean = descriptionError !== ""
+  const charLimit = 200
+
+  const onChangeText = (text: string) => {
+    // if user input is too long, do not updatefield.
+    if (text.length > charLimit) {
+      setDescriptionError(`Description cannot exceed ${charLimit} characters`)
+    }
+    
+    // if the input text is valid, clear the error (if exists) and update field
+    else {
+      if(descriptionErrorExists) setDescriptionError("")
+      setDescription(text)
+    }
+  }
 
   return (
     <View style={styles.fieldContainer}>
       <Text style={styles.fieldTitle}>Description</Text>
       <TextInput
           style={styles.descriptionField}
-          onChangeText={(text) => setDescription(text)}
+          onChangeText={(text) => onChangeText(text)}
           value={description}
           multiline={true}
         >        
         </TextInput>
+        <View>{descriptionErrorExists ? <Text style={styles.errorText}>{descriptionError}</Text> : null}</View>
     </View>
   )
 }
@@ -220,7 +310,8 @@ interface goalProps {
   goal: number;
   setGoal(value: number): void;
   timePeriod: string;
-  setTimePeriod(value: string): void;
+  goalError: string;
+  setGoalError(value: string): void;
 }
 
 const Goal = (props: goalProps) => {
@@ -228,6 +319,9 @@ const Goal = (props: goalProps) => {
   const string_goal = goal === 0 ? "" : goal.toString();
   const setGoal = props.setGoal;
   const timePeriod = props.timePeriod;
+  const goalError = props.goalError;
+  const setGoalError = props.setGoalError;
+  const goalErrorExists: boolean = goalError !== ""
   let per = "";
 
   switch (timePeriod) {
@@ -249,8 +343,11 @@ const Goal = (props: goalProps) => {
     let num = Number(text);
 
     if (isNaN(num)) {
-      console.log("whoops");
+      setGoalError("Goal must be a number");
+    } else if(num > 100) {
+      setGoalError("Goal cannot be greater than 100");
     } else {
+      if(goalErrorExists) setGoalError("");
       setGoal(num);
     }
   };
@@ -268,9 +365,23 @@ const Goal = (props: goalProps) => {
         <Text style={styles.slash}>/</Text>
         <Text style={styles.per}>{per}</Text>
       </View>
+      <View>{goalErrorExists ? <Text style={styles.errorText}>{goalError}</Text> : null}</View>
     </View>
   );
 };
+
+/**
+ * <Picker
+          selectedValue={timePeriod}
+          style={{height: 50, width: 100}}
+          onValueChange={(itemValue, itemIndex) => {setTimePeriod(itemValue.toString())}}
+        >
+          <Picker.Item label="Day" value="Daily"/>
+          <Picker.Item label="Week" value="Weekly"/>
+          <Picker.Item label="Month" value="Monthly"/>
+          <Picker.Item label="Year" value="Yearly"/>
+        </Picker>
+ */
 
 interface trackHabitOnProps {
   days: {};
@@ -429,6 +540,23 @@ const Reminders = (props: any) => {
 const MotivationalMsg = (props: any) => {
   const msg = props.msg;
   const onChangeMsg = props.onChangeMsg;
+  const msgError = props.msgError
+  const setMsgError = props.setMsgError
+  const msgErrorExists: boolean = msgError !== ""
+  const charLimit = 200
+
+  const onChangeText = (text: string) => {
+    // if user input is too long, do not updatefield.
+    if (text.length > charLimit) {
+      setMsgError(`Motivational Message cannot exceed ${charLimit} characters`)
+    }
+    
+    // if the input text is valid, clear the error (if exists) and update field
+    else {
+      if(msgErrorExists) setMsgError("")
+      onChangeMsg(text)
+    }
+  }
 
   return (
     <View style={styles.fieldContainer}>
@@ -436,11 +564,12 @@ const MotivationalMsg = (props: any) => {
       <View>
         <TextInput
           style={styles.motivationalMsgField}
-          onChangeText={(text) => onChangeMsg(text)}
+          onChangeText={(text) => onChangeText(text)}
           value={msg}
           multiline={true}
         ></TextInput>
       </View>
+      <View>{msgErrorExists ? <Text style={styles.errorText}>{msgError}</Text> : null}</View>
     </View>
   );
 };
@@ -572,6 +701,9 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 5,
   },
+  errorText: {
+    color: "red"
+  }
 });
 
 export default CreateHabitScreen;
