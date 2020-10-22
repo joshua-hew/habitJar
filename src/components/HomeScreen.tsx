@@ -1,7 +1,12 @@
 import React, { Component, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { selectHabits, habitInterface, increment, decrement } from "../features/habitSlice";
-import { calculateHabitProgress } from "../features/habitSlice";
+import {
+  selectHabits,
+  habitInterface,
+  increment,
+  decrement,
+} from "../features/habitSlice";
+import { calculateHabitProgress } from "./HelperFunctions";
 import {
   StyleSheet,
   Text,
@@ -11,8 +16,15 @@ import {
   FlatList,
 } from "react-native";
 import { NavigationContainer, useLinkProps } from "@react-navigation/native";
-import {getTodaysDate, dateToString} from "./HelperFunctions"
-import { isSameDay, isToday, isTomorrow, isYesterday, getDay, getDate, format } from "date-fns";
+import {
+  isSameDay,
+  isToday,
+  isTomorrow,
+  isYesterday,
+  getDay,
+  getDate,
+  format,
+} from "date-fns";
 
 interface HomeScreenProps {
   navigation: {};
@@ -24,7 +36,7 @@ export const HomeScreen = (props: HomeScreenProps) => {
   const dispatch = useDispatch();
   const [text, setText] = useState("");
 
-  const today = new Date()
+  const today = new Date();
   const [curSelectedDate, setCurSelectedDate] = useState(today);
   //console.log("curSelectedDate:", curSelectedDate)
 
@@ -32,15 +44,23 @@ export const HomeScreen = (props: HomeScreenProps) => {
   // TODO: Change basic text -> unordered list of habits
   // TODO: change logic in caclulateProgress() to get the day of the current view
   // TODO: implement increment function
-  
+
   // Design: keep history as entries / snapshots that record certain bits of info about the state of the habit like done and goal (at the time of recording)
 
   return (
     <View style={styles.container}>
       <Title />
       <GrayBar />
-      <CalendarBar today={today} curSelectedDate={curSelectedDate} setCurSelectedDate={setCurSelectedDate}/>
-      <HabitList habits={habits} curSelectedDate={curSelectedDate} navigation={props.navigation}/>
+      <CalendarBar
+        today={today}
+        curSelectedDate={curSelectedDate}
+        setCurSelectedDate={setCurSelectedDate}
+      />
+      <HabitList
+        habits={habits}
+        curSelectedDate={curSelectedDate}
+        navigation={props.navigation}
+      />
       <CreateHabitButton navigation={props.navigation} />
     </View>
   );
@@ -59,38 +79,34 @@ const GrayBar = () => {
 };
 
 const CalendarBar = (props: any) => {
-  const today = props.today
+  const today = props.today;
   const curSelectedDate = props.curSelectedDate;
   const setCurSelectedDate = props.setCurSelectedDate;
-  const leftArrow = "<"
-  const rightArrow = ">"
-  const dayNumber = curSelectedDate.getDate()
-  
+  const leftArrow = "<";
+  const rightArrow = ">";
+  const dayNumber = curSelectedDate.getDate();
+
   const displayDateText = (today: Date, curSelectedDate: Date) => {
     // Today
-    if(isSameDay(today, curSelectedDate)) return "TODAY"
-
+    if (isSameDay(today, curSelectedDate)) return "TODAY";
     // Tomorrow
-    else if(isTomorrow(curSelectedDate)) return "TOMORROW"
-
+    else if (isTomorrow(curSelectedDate)) return "TOMORROW";
     // Yesterday
-    else if(isYesterday(curSelectedDate)) return "YESTERDAY"
-
+    else if (isYesterday(curSelectedDate)) return "YESTERDAY";
     else {
-      return format(curSelectedDate, "E, MMM do")
+      return format(curSelectedDate, "E, MMM do");
     }
-  }
-  const dateText = displayDateText(today, curSelectedDate)
+  };
+  const dateText = displayDateText(today, curSelectedDate);
 
   const decrementDay = () => {
-    let prevDay = new Date(curSelectedDate.getTime()-1000*60*60*24)
-    setCurSelectedDate(prevDay)
-  }
+    let prevDay = new Date(curSelectedDate.getTime() - 1000 * 60 * 60 * 24);
+    setCurSelectedDate(prevDay);
+  };
   const incrementDay = () => {
-    let nextDay = new Date(curSelectedDate.getTime()+1000*60*60*24)
-    setCurSelectedDate(nextDay)
-    
-  }
+    let nextDay = new Date(curSelectedDate.getTime() + 1000 * 60 * 60 * 24);
+    setCurSelectedDate(nextDay);
+  };
   return (
     <View style={styles.calendarContainer}>
       <Text style={styles.calendarText}>{dateText}</Text>
@@ -136,16 +152,22 @@ const CalendarBar = (props: any) => {
 
 const HabitList = (props: any) => {
   const habits = props.habits;
-  const curSelectedDate = props.curSelectedDate
-  const navigation = props.navigation
-  console.log(habits)
+  const curSelectedDate = props.curSelectedDate;
+  const navigation = props.navigation;
+  console.log(habits);
   //console.log("HabitList cur date:", curSelectedDate)
   return (
     <View style={styles.habitListContainer}>
       <FlatList
         contentContainerStyle={styles.testContainer}
         data={habits}
-        renderItem={({ item }) => <HabitCard habit={item} curSelectedDate={curSelectedDate} navigation={navigation}/>}
+        renderItem={({ item }) => (
+          <HabitCard
+            habit={item}
+            curSelectedDate={curSelectedDate}
+            navigation={navigation}
+          />
+        )}
         extraData={curSelectedDate} //This is to ensure that the HabitCard updates everytime curSelectedDate changes
       />
     </View>
@@ -159,22 +181,22 @@ interface habitCardProps {
 const MockHabitCard = (props: any) => {
   const h = props.habit;
   const dispatch = useDispatch();
-  const curSelectedDate = props.curSelectedDate
+  const curSelectedDate = props.curSelectedDate;
   const [progress, done, goal] = calculateHabitProgress(h, curSelectedDate);
-  
+
   const incrementHabitCount = (h: any, date: Date) => {
     //console.log("increment. date is:", date)
-    const payload: any = {}
-    payload.habitIndex = h.key
-    payload.targetDate = date.toString()  // actions should accept serializable values
-    dispatch(increment(payload))
+    const payload: any = {};
+    payload.habitIndex = h.key;
+    payload.targetDate = date.toString(); // actions should accept serializable values
+    dispatch(increment(payload));
   };
 
   const decrementHabitCount = (h: any, date: Date) => {
-    const payload: any = {}
-    payload.habitIndex = h.key
-    payload.targetDate = date.toString()  // actions should accept serializable values
-    dispatch(decrement(payload))
+    const payload: any = {};
+    payload.habitIndex = h.key;
+    payload.targetDate = date.toString(); // actions should accept serializable values
+    dispatch(decrement(payload));
   };
 
   const cardStyles = StyleSheet.create({
@@ -215,7 +237,7 @@ const MockHabitCard = (props: any) => {
       opacity: 0.9,
     },
   });
-  
+
   return (
     <View>
       <TouchableOpacity
@@ -224,36 +246,37 @@ const MockHabitCard = (props: any) => {
       >
         <View style={cardStyles.progressBar}></View>
         <Text style={cardStyles.habitName}>{h.name}</Text>
-        <Text style={cardStyles.progressCounter}>{done} / {goal}</Text>
+        <Text style={cardStyles.progressCounter}>
+          {done} / {goal}
+        </Text>
       </TouchableOpacity>
-      
+
       <TouchableOpacity onPress={() => decrementHabitCount(h, curSelectedDate)}>
-      <Text>Decrement</Text>
+        <Text>Decrement</Text>
       </TouchableOpacity>
     </View>
-    
   );
-}
+};
 
 const HabitCard = (props: any) => {
   const h = props.habit;
   const dispatch = useDispatch();
-  const curSelectedDate = props.curSelectedDate
+  const curSelectedDate = props.curSelectedDate;
   const [progress, done, goal] = calculateHabitProgress(h, curSelectedDate);
-  
+
   const incrementHabitCount = (h: any, date: Date) => {
     //console.log("increment. date is:", date)
-    const payload: any = {}
-    payload.habitIndex = h.key
-    payload.targetDate = date.toString()  // actions should accept serializable values
-    dispatch(increment(payload))
+    const payload: any = {};
+    payload.habitIndex = h.key;
+    payload.targetDate = date.toString(); // actions should accept serializable values
+    dispatch(increment(payload));
   };
 
   const decrementHabitCount = (h: any, date: Date) => {
-    const payload: any = {}
-    payload.habitIndex = h.key
-    payload.targetDate = date.toString()  // actions should accept serializable values
-    dispatch(decrement(payload))
+    const payload: any = {};
+    payload.habitIndex = h.key;
+    payload.targetDate = date.toString(); // actions should accept serializable values
+    dispatch(decrement(payload));
   };
 
   const cardStyles = StyleSheet.create({
@@ -306,26 +329,32 @@ const HabitCard = (props: any) => {
   return (
     <View>
       <View style={cardStyles.habitCardContainer}>
-      <View style={cardStyles.progressBar}></View>
-        
-        <TouchableOpacity style={cardStyles.habitNameContainer} onPress={() => props.navigation.navigate("EditHabit", h)}>
+        <View style={cardStyles.progressBar}></View>
+
+        <TouchableOpacity
+          style={cardStyles.habitNameContainer}
+          onPress={() => props.navigation.navigate("EditHabit", { habit: h })}
+        >
           <Text style={cardStyles.habitName}>{h.name}</Text>
         </TouchableOpacity>
-        
-      
-        
+
         <View style={cardStyles.progressCounterContainer}>
-          <TouchableOpacity onPress={() => incrementHabitCount(h, curSelectedDate)}>
+          <TouchableOpacity
+            onPress={() => incrementHabitCount(h, curSelectedDate)}
+          >
             <Text>UP</Text>
           </TouchableOpacity>
-          <Text style={cardStyles.progressCounter}>{done} / {goal}</Text>
-          <TouchableOpacity onPress={() => decrementHabitCount(h, curSelectedDate)}>
+          <Text style={cardStyles.progressCounter}>
+            {done} / {goal}
+          </Text>
+          <TouchableOpacity
+            onPress={() => decrementHabitCount(h, curSelectedDate)}
+          >
             <Text>DOWN</Text>
           </TouchableOpacity>
         </View>
       </View>
     </View>
-    
   );
 };
 

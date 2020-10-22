@@ -8,7 +8,7 @@ import store from "./src/store/store";
 import { Provider } from "react-redux";
 import HomeScreen from "./src/components/HomeScreen";
 import CreateHabitScreen from "./src/components/CreateHabitScreen";
-import EditHabitScreen from "./src/components/EditHabitScreen"
+import EditHabitScreen from "./src/components/EditHabitScreen";
 import { SimpleHabitList } from "./src/components/SimpleHabitList";
 import { Counter } from "./src/components/Counter";
 
@@ -18,23 +18,22 @@ const App = () => {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <Stack.Navigator>          
-        <Stack.Screen
+        <Stack.Navigator>
+          <Stack.Screen
             name="CreateHabit"
             component={CreateHabitScreen}
             options={{ headerShown: false }}
-          />     
+          />
           <Stack.Screen
             name="Home"
             component={HomeScreen}
             options={{ headerShown: false }}
-          /> 
+          />
           <Stack.Screen
             name="EditHabit"
             component={EditHabitScreen}
-            options={{ headerShown: true }}
-          />            
-               
+            options={{ headerShown: false }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
