@@ -1,12 +1,18 @@
 import {
-  startOfWeek,
   endOfWeek,
   isSameDay,
   startOfMonth,
-  endOfMonth,
   startOfYear,
   endOfYear,
   compareAsc,
+  endOfMonth,
+  eachDayOfInterval,
+  isSunday,
+  startOfWeek,
+  isFirstDayOfMonth,
+  isSaturday,
+  lastDayOfWeek,
+  add,
 } from "date-fns";
 
 interface entry {
@@ -137,6 +143,24 @@ export const calculateHabitProgress = (habit: any, date: Date) => {
   progress = progress * 100;
   if (progress > 100) progress = 100;
   return [progress, done_during_interval, goal];
+};
+
+export const getFirstLastCalendarDays = (month: number, year: number) => {
+  let first, last;
+
+  // First of month does not always start on Sunday. Get date of Sunday that potentially starts b4 month starts
+  const firstDayOfMonth = new Date(year, month, 1);
+  if (!isSunday(firstDayOfMonth)) {
+    first = startOfWeek(firstDayOfMonth);
+  } else {
+    first = firstDayOfMonth;
+  }
+
+  // Add 5 weeks to first Saturday to get 6 weeks total
+  const firstSat = lastDayOfWeek(first);
+  last = add(firstSat, { weeks: 5 });
+
+  return [first, last];
 };
 
 /** 

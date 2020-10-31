@@ -64,32 +64,30 @@ export const CreateHabitScreen = (props: any) => {
   const onSubmit = (formData: any, formErrors: any) => {
     // Todo: error msg for missing mandatory field
     console.log(formData);
-
     /** 
     // Basic form validation
     // 1. Check for empty fields
-    const optionalFields = ["description", "msg"]
+    const optionalFields = ["description", "msg"];
     for (const [key, value] of Object.entries(formData)) {
       if (optionalFields.includes(key)) continue;
       if (value === "" || value === 0) {
-        console.log(`Cannot save habit. ${key} is empty.`)
-        return
+        console.log(`Cannot save habit. ${key} is empty.`);
+        return;
       }
     }
 
     // 2. Check if any error msgs
     for (const [key, value] of Object.entries(formErrors)) {
       if (value !== "") {
-        console.log(`Cannot save habit. ${key}: ${value}`)
-        return
+        console.log(`Cannot save habit. ${key}: ${value}`);
+        return;
       }
     }
 
     // Dispatch to store
     dispatch(createHabit(formData));
     props.navigation.navigate("Home");
-    */
-
+*/
     // Demo code
     const test1 = {
       name: "Calisthenics",
@@ -107,8 +105,26 @@ export const CreateHabitScreen = (props: any) => {
       habitColor: "#F8E71C",
       msg: "Responsibility",
     };
-    const test3 = {
+    const test4 = {
       name: "Read book for 30 min",
+      timePeriod: "Daily",
+      goal: 1,
+      habitColor: "#D0021B",
+    };
+    const test5 = {
+      name: "Read book for 31 min",
+      timePeriod: "Daily",
+      goal: 1,
+      habitColor: "#D0021B",
+    };
+    const test6 = {
+      name: "Read book for 32 min",
+      timePeriod: "Daily",
+      goal: 1,
+      habitColor: "#D0021B",
+    };
+    const test3 = {
+      name: "Read book for 33 min",
       timePeriod: "Daily",
       goal: 1,
       habitColor: "#D0021B",
@@ -116,14 +132,11 @@ export const CreateHabitScreen = (props: any) => {
     dispatch(createHabit(test1));
     dispatch(createHabit(test2));
     dispatch(createHabit(test3));
+    dispatch(createHabit(test4));
+    dispatch(createHabit(test5));
+    dispatch(createHabit(test6));
     props.navigation.navigate("Home");
   };
-
-  /**
-   * <TrackHabitOn days={days} setDays={setDays} />
-   * <TimePeriod timePeriod={timePeriod} setTimePeriod={setTimePeriod} />
-   *
-   */
 
   return (
     <KeyboardAwareScrollView style={styles.scrollViewContainer}>
