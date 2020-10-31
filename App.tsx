@@ -12,6 +12,7 @@ import EditHabitScreen from "./src/components/EditHabitScreen";
 import CalendarScreen from "./src/components/CalendarScreen";
 import { SimpleHabitList } from "./src/components/SimpleHabitList";
 import { Counter } from "./src/components/Counter";
+import { Game } from "./src/screens/MainScreen";
 
 const Stack = createStackNavigator();
 
@@ -20,6 +21,11 @@ const App = () => {
     <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator>
+          <Stack.Screen
+            name="Main"
+            component={Game}
+            options={{ headerShown: false }}
+          />
           <Stack.Screen
             name="CreateHabit"
             component={CreateHabitScreen}
