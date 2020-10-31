@@ -31,6 +31,8 @@ interface HomeScreenProps {
   route: {};
 }
 
+// BUG: Cannot scroll whe have a lot of habits
+
 export const HomeScreen = (props: HomeScreenProps) => {
   const habits = useSelector(selectHabits);
   const dispatch = useDispatch();
@@ -62,6 +64,7 @@ export const HomeScreen = (props: HomeScreenProps) => {
         navigation={props.navigation}
       />
       <CreateHabitButton navigation={props.navigation} />
+      <CalendarButton navigation={props.navigation} />
     </View>
   );
 };
@@ -159,7 +162,6 @@ const HabitList = (props: any) => {
   return (
     <View style={styles.habitListContainer}>
       <FlatList
-        contentContainerStyle={styles.testContainer}
         data={habits}
         renderItem={({ item }) => (
           <HabitCard
@@ -177,86 +179,6 @@ const HabitList = (props: any) => {
 interface habitCardProps {
   habit: habitInterface;
 }
-
-const MockHabitCard = (props: any) => {
-  const h = props.habit;
-  const dispatch = useDispatch();
-  const curSelectedDate = props.curSelectedDate;
-  const [progress, done, goal] = calculateHabitProgress(h, curSelectedDate);
-
-  const incrementHabitCount = (h: any, date: Date) => {
-    //console.log("increment. date is:", date)
-    const payload: any = {};
-    payload.habitIndex = h.key;
-    payload.targetDate = date.toString(); // actions should accept serializable values
-    dispatch(increment(payload));
-  };
-
-  const decrementHabitCount = (h: any, date: Date) => {
-    const payload: any = {};
-    payload.habitIndex = h.key;
-    payload.targetDate = date.toString(); // actions should accept serializable values
-    dispatch(decrement(payload));
-  };
-
-  const cardStyles = StyleSheet.create({
-    habitCardContainer: {
-      minHeight: 83,
-      marginLeft: "5%",
-      marginRight: "5%",
-      marginTop: 30,
-      borderRadius: 15,
-      backgroundColor: "#E6E6E6",
-    },
-    progressBar: {
-      position: "absolute",
-      height: "100%",
-      width: `${progress}%`,
-      borderTopLeftRadius: 15,
-      borderBottomLeftRadius: 15,
-      borderTopRightRadius: progress === 100 ? 15 : 0,
-      borderBottomRightRadius: progress === 100 ? 15 : 0,
-      backgroundColor: h.habitColor,
-    },
-
-    habitName: {
-      position: "absolute",
-      marginTop: "9%",
-      marginLeft: "10%",
-      fontWeight: "bold",
-      fontSize: 18,
-      opacity: 0.9,
-    },
-
-    progressCounter: {
-      position: "relative",
-      marginTop: "9%",
-      marginLeft: "75%",
-      fontWeight: "bold",
-      fontSize: 18,
-      opacity: 0.9,
-    },
-  });
-
-  return (
-    <View>
-      <TouchableOpacity
-        style={cardStyles.habitCardContainer}
-        onPress={() => incrementHabitCount(h, curSelectedDate)}
-      >
-        <View style={cardStyles.progressBar}></View>
-        <Text style={cardStyles.habitName}>{h.name}</Text>
-        <Text style={cardStyles.progressCounter}>
-          {done} / {goal}
-        </Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => decrementHabitCount(h, curSelectedDate)}>
-        <Text>Decrement</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
 
 const HabitCard = (props: any) => {
   const h = props.habit;
@@ -370,6 +292,14 @@ const CreateHabitButton = (props: CreateHabitButtonProps) => {
   );
 };
 
+const CalendarButton = (props: any) => {
+  return (
+    <TouchableOpacity onPress={() => props.navigation.navigate("Calendar")}>
+      <Text>Calendar</Text>
+    </TouchableOpacity>
+  );
+};
+
 const styles = StyleSheet.create({
   container: {
     //backgroundColor: "green",
@@ -410,7 +340,7 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   habitListContainer: {
-    //backgroundColor: "blue",
+    backgroundColor: "blue",
     flex: 1,
   },
   testContainer: {
