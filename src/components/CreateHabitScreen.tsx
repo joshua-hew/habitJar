@@ -1,8 +1,8 @@
 import { useLinkProps } from "@react-navigation/native";
 import React, { Component, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { selectHabits, habitInterface } from "../features/habitSlice";
-import { createHabit } from "../features/habitSlice";
+import { selectHabits } from "../slices/habitSlice";
+import { createHabit } from "../slices/habitSlice";
 import {
   StyleSheet,
   Text,

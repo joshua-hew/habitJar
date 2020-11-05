@@ -9,19 +9,17 @@ import {
   endOfYear,
   compareAsc,
 } from "date-fns";
+import { habit, segment } from "../interfaces/interfaces";
+import { insert } from "../functions/insert";
 
 // TODO: create interface for habits array
 
 export const habitSlice = createSlice({
   name: "habit",
   initialState: {
-    habit: "No Habit",
     habits: [] as any,
   },
   reducers: {
-    changeHabit: (state, action) => {
-      state.habit = action.payload;
-    },
     createHabit: (state, action) => {
       console.log(`hey there! action.payload:`);
       console.log(action.payload);
@@ -66,6 +64,13 @@ export const habitSlice = createSlice({
       // action.payload:
       // habitIndex: string
       // targetDate: string
+      const date = new Date(action.payload);
+      const oldTimeline: segment[] = state.habits[0].timeline;
+      const newTimeline: segment[] = insert(oldTimeline, date);
+      state.habits[0].timeline = newTimeline;
+      console.log(state.habits[0]);
+
+      /** 
       const habitIndex = Number(action.payload.habitIndex);
       const targetDate = new Date(action.payload.targetDate);
       const targetDateString = action.payload.targetDate;
@@ -87,6 +92,7 @@ export const habitSlice = createSlice({
 
       // If entry does not exist in habit's history, create one.
       history.push({ date: targetDateString, done: 1 });
+      */
     },
     decrement: (state, action) => {
       // action.payload:
@@ -114,31 +120,64 @@ export const habitSlice = createSlice({
       // If entry does not exist in habit's history, create one.
       history.push({ date: targetDateString, done: 0 });
     },
+    createTestHabit: (state) => {
+      const dateCreated = new Date(2020, 9, 25, 0, 0, 0).toString();
+      const testHabit: habit = {
+        dateCreated: dateCreated,
+        timeline: [
+          {
+            startDate: dateCreated, // Oct 25, (beg of Sun)
+            endDate: new Date(2020, 9, 31, 23, 59, 59, 999).toString(), // Oct 31, (end of Sat)
+            name: "",
+            description: "",
+            goal: 0,
+            timePeriod: "",
+            color: "",
+            activityLog: [], // empty on purpose
+          },
+          {
+            startDate: new Date(2020, 10, 1, 0, 0, 0).toString(), // Nov 1, (beg of Sun)
+            endDate: new Date(2020, 10, 1, 23, 59, 59, 999).toString(), // Nov 1, (end of Sun)
+            name: "",
+            description: "",
+            goal: 0,
+            timePeriod: "",
+            color: "",
+            activityLog: [],
+          },
+          {
+            startDate: new Date(2020, 10, 2, 0, 0, 0).toString(), // Nov 2, (beg of Mon)
+            endDate: undefined,
+            name: "",
+            description: "",
+            goal: 0,
+            timePeriod: "",
+            color: "",
+            activityLog: [
+              {
+                date: new Date(2020, 10, 2, 14, 30, 0).toString(), // Nov 2, 2:30 pm
+                done: 1,
+              },
+            ],
+          },
+        ],
+      };
+      state.habits.push(testHabit);
+      console.log(state.habits[0]);
+    },
   },
 });
 
 export const {
-  changeHabit,
   createHabit,
   editHabit,
   deleteHabit,
   increment,
   decrement,
+  createTestHabit,
 } = habitSlice.actions;
 
 export default habitSlice.reducer;
 
-export const selectHabit = (state: any) => state.habits.habit;
+export const selectHabit = (state: any) => state.habits.habits[0];
 export const selectHabits = (state: any) => state.habits.habits;
-
-export interface habitInterface {
-  key: string; // "0"
-  color: string; // "#fffff"
-  goal: number;
-  history: [
-    {
-      date: string; // "Wed Oct 14 2020 20:03:02 GMT-0400 (Eastern Daylight Time)"
-      done: number;
-    }
-  ];
-}

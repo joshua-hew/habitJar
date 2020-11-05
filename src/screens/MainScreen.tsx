@@ -1,5 +1,5 @@
 import React, { Component, PureComponent } from "react";
-import { StyleSheet, StatusBar, Dimensions, View } from "react-native";
+import { StyleSheet, StatusBar, Dimensions, View, Text } from "react-native";
 import { GameEngine } from "react-native-game-engine";
 import { Physics, CreateBox, MoveBox, CleanBoxes } from "../systems/BoxSystems";
 import { Box } from "../renderers/BoxRenderer";
@@ -129,6 +129,9 @@ const Game = (props: any) => {
       */
       entities={entities}
     >
+      <View style={{ backgroundColor: "blue", height: 200 }}>
+        <Text>Test Text</Text>
+      </View>
       <StatusBar hidden={true} />
     </GameEngine>
   );
