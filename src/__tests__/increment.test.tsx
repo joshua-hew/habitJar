@@ -1,15 +1,5 @@
 import { segment } from "../interfaces/interfaces";
 import { insert } from "../functions/insert";
-import { toNumber } from "lodash";
-import {
-  isBefore,
-  sub,
-  startOfDay,
-  endOfDay,
-  isAfter,
-  isEqual,
-  isSameDay,
-} from "date-fns";
 
 describe("Test suite for increment function", () => {
   const today = new Date(2020, 10, 2, 21, 39, 0); // pretend today is Nov 2, 2020 9:39:00 pm

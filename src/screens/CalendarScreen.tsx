@@ -1,11 +1,14 @@
 import React, { Component, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { selectHabit, increment } from "../slices/habitSlice";
+import { selectHabit, increment, decrement } from "../slices/habitSlice";
 import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  TouchableHighlight,
   View,
+  Modal,
+  Alert,
   TextInput,
   FlatList,
 } from "react-native";
@@ -31,6 +34,7 @@ import {
   isAfter,
 } from "date-fns";
 import getDaysOfCalendarMonth from "../functions/getDaysOfCalendarMonth";
+import getActivityEntries from "../functions/getActivityEntries";
 import count_times_done_on_date from "../functions/count_times_done_on_date";
 
 const CalendarScreen = (props: any) => {
@@ -69,6 +73,7 @@ const CalendarMonth = (props: any) => {
   const year = props.year;
   const month = props.month;
   const today = new Date();
+  console.log(habit);
 
   const calendarDates: Date[] = getDaysOfCalendarMonth(month, year);
   const weeks = [
@@ -199,9 +204,10 @@ const CalendarDay = (props: any) => {
   const timeline = habit.timeline;
   const habitColor = habit.habitColor;
   const day = date.getDate();
-  const done = count_times_done_on_date(timeline, date) > 0 ? true : false;
+  const activityEntries = getActivityEntries(timeline, date); // important
 
   // modal for inserting coins
+  const [modalVisible, setModalVisible] = useState(false);
 
   //redo
   /** 
@@ -219,6 +225,15 @@ const CalendarDay = (props: any) => {
   };
   */
   const textColor = "black";
+  const dispatch = useDispatch();
+
+  const addCoin = (date: Date) => {
+    dispatch(increment(date.toString()));
+  };
+
+  const removeCoin = (date: Date) => {
+    dispatch(decrement(date.toString()));
+  };
 
   const thisStyles = StyleSheet.create({
     container: {
@@ -243,8 +258,45 @@ const CalendarDay = (props: any) => {
   });
   return (
     <View style={thisStyles.container}>
+      <Modal animationType="slide" transparent={true} visible={modalVisible}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>{format(date, "EEE, MMM do")}</Text>
+            <Text>{activityEntries.length}</Text>
+            <TouchableHighlight
+              style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+              onPress={() => {
+                addCoin(date);
+              }}
+            >
+              <Text style={styles.textStyle}>Add Coin</Text>
+            </TouchableHighlight>
+
+            <TouchableHighlight
+              style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+              onPress={() => {
+                removeCoin(date);
+              }}
+            >
+              <Text style={styles.textStyle}>Remove Coin</Text>
+            </TouchableHighlight>
+
+            <TouchableHighlight
+              style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+              onPress={() => {
+                setModalVisible(!modalVisible);
+              }}
+            >
+              <Text style={styles.textStyle}>Cancel</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </Modal>
+
       <View style={thisStyles.innerContainer}>
-        <Text style={thisStyles.day}>{day}</Text>
+        <TouchableHighlight onPress={() => setModalVisible(true)}>
+          <Text style={thisStyles.day}>{day}</Text>
+        </TouchableHighlight>
       </View>
     </View>
   );
@@ -265,6 +317,44 @@ const styles = StyleSheet.create({
     marginRight: 20,
     marginTop: 50,
     marginBottom: 50,
+  },
+  centeredView: {
+    // the full screen-ish container that contains the modal
+    //backgroundColor: "black",
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  openButton: {
+    backgroundColor: "#F194FF",
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
   },
 });
 

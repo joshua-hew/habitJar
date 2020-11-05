@@ -1,14 +1,6 @@
 import { activity_entry, segment } from "../interfaces/interfaces";
 import _ from "lodash";
-import {
-  isBefore,
-  sub,
-  startOfDay,
-  endOfDay,
-  isAfter,
-  isEqual,
-  isSameDay,
-} from "date-fns";
+import { isBefore, sub, startOfDay, endOfDay } from "date-fns";
 import getIndexOfSegment from "../functions/getIndexOfSegment";
 
 export const compareActivityEntries = (

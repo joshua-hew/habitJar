@@ -11,6 +11,7 @@ import {
 } from "date-fns";
 import { habit, segment } from "../interfaces/interfaces";
 import { insert } from "../functions/insert";
+import removeActivityEntry from "../functions/removeActivityEntry";
 
 // TODO: create interface for habits array
 
@@ -62,63 +63,19 @@ export const habitSlice = createSlice({
     },
     increment: (state, action) => {
       // action.payload:
-      // habitIndex: string
       // targetDate: string
       const date = new Date(action.payload);
       const oldTimeline: segment[] = state.habits[0].timeline;
       const newTimeline: segment[] = insert(oldTimeline, date);
       state.habits[0].timeline = newTimeline;
-      console.log(state.habits[0]);
-
-      /** 
-      const habitIndex = Number(action.payload.habitIndex);
-      const targetDate = new Date(action.payload.targetDate);
-      const targetDateString = action.payload.targetDate;
-
-      // Select Habit
-      const habit = state.habits[habitIndex];
-      const history = habit.history;
-
-      for (let entry of history) {
-        const entryDate = new Date(entry.date);
-        //console.log("entryDate", entryDate)
-        //console.log("targetDate", targetDate)
-        //console.log(isSameDay(entryDate, targetDate))
-        if (isSameDay(entryDate, targetDate)) {
-          entry.done += 1;
-          return;
-        }
-      }
-
-      // If entry does not exist in habit's history, create one.
-      history.push({ date: targetDateString, done: 1 });
-      */
     },
     decrement: (state, action) => {
       // action.payload:
-      // habitIndex: string
       // targetDate: string
-      const habitIndex = Number(action.payload.habitIndex);
-      const targetDate = new Date(action.payload.targetDate);
-      const targetDateString = action.payload.targetDate;
-
-      // Select Habit
-      const habit = state.habits[habitIndex];
-      const history = habit.history;
-
-      for (let entry of history) {
-        const entryDate = new Date(entry.date);
-        //console.log("entryDate", entryDate)
-        //console.log("targetDate", targetDate)
-        //console.log(isSameDay(entryDate, targetDate))
-        if (isSameDay(entryDate, targetDate)) {
-          if (entry.done !== 0) entry.done -= 1;
-          return;
-        }
-      }
-
-      // If entry does not exist in habit's history, create one.
-      history.push({ date: targetDateString, done: 0 });
+      const date = new Date(action.payload);
+      const oldTimeline: segment[] = state.habits[0].timeline;
+      const newTimeline: segment[] = removeActivityEntry(oldTimeline, date);
+      state.habits[0].timeline = newTimeline;
     },
     createTestHabit: (state) => {
       const dateCreated = new Date(2020, 9, 25, 0, 0, 0).toString();
@@ -146,7 +103,7 @@ export const habitSlice = createSlice({
             activityLog: [],
           },
           {
-            startDate: new Date(2020, 10, 2, 0, 0, 0).toString(), // Nov 2, (beg of Mon)
+            startDate: new Date(2020, 10, 2, 0, 0, 0).toString(), // Nov 2, (beg of Mon) (today)
             endDate: undefined,
             name: "",
             description: "",
