@@ -1,6 +1,6 @@
 import React, { Component, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { changeHabit, selectHabit } from "../features/habitSlice";
+import { changeHabit, selectHabit } from "../slices/habitSlice";
 import {
   StyleSheet,
   Text,

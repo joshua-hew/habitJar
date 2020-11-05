@@ -1,12 +1,18 @@
-# Y.A.H.A - Yet Another Habit App
+# HabitJar - iOS app
 
-Yet. Another. Habit. App. is a simple habit tracking app available for select iOS devices.
+A habit app meant for focusing on building one really challenging habit, or breaking a stubborn one.
+
+"Quote about one person not making a person rich"
+
+- from Atomic Habits by James Clear
 
 ## Tools & Technologies Used:
 
 - React Native
+- React Native Game Engine
+- Matter.js
 - Redux
-- TypeScript
+- TypeScript (lol sort of)
 - Jest
 
 # Dev Notes

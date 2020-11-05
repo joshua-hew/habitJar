@@ -1,11 +1,6 @@
 import React, { Component, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  selectHabits,
-  habitInterface,
-  increment,
-  decrement,
-} from "../features/habitSlice";
+import { selectHabits, increment, decrement } from "../slices/habitSlice";
 import { calculateHabitProgress } from "./HelperFunctions";
 import {
   StyleSheet,
@@ -175,10 +170,6 @@ const HabitList = (props: any) => {
     </View>
   );
 };
-
-interface habitCardProps {
-  habit: habitInterface;
-}
 
 const HabitCard = (props: any) => {
   const h = props.habit;

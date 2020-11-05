@@ -1,11 +1,6 @@
 import React, { Component, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { selectHabits, increment, decrement } from "../slices/habitSlice";
-import {
-  calculateHabitProgress,
-  getFirstLastCalendarDays,
-  count_times_done_on_date,
-} from "./HelperFunctions";
+import { selectHabit, increment } from "../slices/habitSlice";
 import {
   StyleSheet,
   Text,
@@ -35,99 +30,47 @@ import {
   isBefore,
   isAfter,
 } from "date-fns";
-import { eachWeekOfInterval } from "date-fns/esm";
+import getDaysOfCalendarMonth from "../functions/getDaysOfCalendarMonth";
+import count_times_done_on_date from "../functions/count_times_done_on_date";
 
-interface HomeScreenProps {
-  navigation: {};
-  route: {};
-}
-
-export const CalendarScreen = (props: HomeScreenProps) => {
-  const habits = useSelector(selectHabits);
+const CalendarScreen = (props: any) => {
+  const habit = useSelector(selectHabit);
   const dispatch = useDispatch();
-  const [text, setText] = useState("");
+  const [year, setYear] = useState(new Date().getFullYear());
 
-  const today = new Date();
-  const [theFirst, setTheFirst]: [Date, any] = useState(startOfMonth(today)); // "first of current month"
-
+  // Change hardcoded month to dynamic later
   return (
     <View style={styles.container}>
-      <Title />
-      <HabitCalendarList habits={habits} theFirst={theFirst} />
+      <Title year={year} />
+      <View style={styles.container2}>
+        <CalendarMonth habit={habit} year={year} month={10} />
+      </View>
     </View>
   );
 };
 
-const Title = () => {
-  const thisStyles = StyleSheet.create({
-    container: {
-      marginLeft: 20,
-      marginBottom: 30,
-    },
-    titleText: {
-      fontWeight: "bold",
+const Title = (props: any) => {
+  const year = props.year;
+  const titleStyles = StyleSheet.create({
+    container: {},
+    yearText: {
       fontSize: 24,
-      opacity: 0.9,
     },
   });
   return (
-    <View style={thisStyles.container}>
-      <Text style={thisStyles.titleText}>Monthly</Text>
+    <View>
+      <Text style={titleStyles.yearText}>{year}</Text>
     </View>
   );
 };
 
-const HabitCalendarList = (props: any) => {
-  const habits = props.habits;
-  const theFirst = props.theFirst;
-  console.log(habits);
-
-  const thisStyles = StyleSheet.create({
-    habitListContainer: {
-      //backgroundColor: "blue",
-      flex: 1,
-      //paddingBottom: 40,
-      //marginBottom: 30,
-    },
-    contentContainer: {
-      paddingTop: 50,
-      paddingBottom: 100,
-    },
-  });
-
-  return (
-    <View style={thisStyles.habitListContainer}>
-      <FlatList
-        data={habits}
-        renderItem={({ item }) => (
-          <HabitCalendarCard habit={item} theFirst={theFirst} />
-        )}
-        contentContainerStyle={thisStyles.contentContainer}
-      />
-    </View>
-  );
-};
-
-// Will reuse component in home screen.
-const HabitCalendarCard = (props: any) => {
-  const theFirst = props.theFirst; // Hopefully, this comp will re-render when "theFirst" is changed
+const CalendarMonth = (props: any) => {
   const habit = props.habit;
-
-  const [curMonth, setCurMonth] = useState(theFirst); // sill the first of the month, not the month number
-  const month = curMonth.getMonth();
-  const year = curMonth.getFullYear();
-
+  const year = props.year;
+  const month = props.month;
   const today = new Date();
-  let [firstCalendarDay, lastCalendarDay] = getFirstLastCalendarDays(
-    month,
-    year
-  );
 
-  const calendarDates: Date[] = eachDayOfInterval({
-    start: firstCalendarDay,
-    end: lastCalendarDay,
-  });
-
+  const calendarDates: Date[] = getDaysOfCalendarMonth(month, year);
   const weeks = [
     calendarDates.slice(0, 7),
     calendarDates.slice(7, 14),
@@ -138,19 +81,16 @@ const HabitCalendarCard = (props: any) => {
   ];
 
   const rows = [
-    <CalendarHeader key="header" curMonth={curMonth} habit={habit} />,
-    <CalendarRow key="0" week={weeks[0]} habit={habit} />,
-    <CalendarRow key="1" week={weeks[1]} habit={habit} />,
-    <CalendarRow key="2" week={weeks[2]} habit={habit} />,
-    <CalendarRow key="3" week={weeks[3]} habit={habit} />,
-    <CalendarRow key="4" week={weeks[4]} habit={habit} />,
-    <CalendarRow key="5" week={weeks[5]} habit={habit} />,
+    <CalendarHeader key="header" month={month} habit={habit} />,
+    <CalendarWeek key="0" week={weeks[0]} habit={habit} />,
+    <CalendarWeek key="1" week={weeks[1]} habit={habit} />,
+    <CalendarWeek key="2" week={weeks[2]} habit={habit} />,
+    <CalendarWeek key="3" week={weeks[3]} habit={habit} />,
+    <CalendarWeek key="4" week={weeks[4]} habit={habit} />,
+    <CalendarWeek key="5" week={weeks[5]} habit={habit} />,
   ];
-
-  // Gener//ate the data that will be passed to each day
-
   const thisStyles = StyleSheet.create({
-    calCardContainer: {
+    container: {
       backgroundColor: "white",
       flex: 1,
       //height: 400,
@@ -174,18 +114,12 @@ const HabitCalendarCard = (props: any) => {
       fontWeight: "bold",
     },
   });
-  return (
-    <View style={thisStyles.calCardContainer}>
-      <Text style={thisStyles.habitName}>{habit.name}</Text>
-      {rows}
-    </View>
-  );
+  return <View style={thisStyles.container}>{rows}</View>;
 };
 
 const CalendarHeader = (props: any) => {
-  const textColor = props.habit.habitColor;
-  const curMonth = props.curMonth;
-  const monthText = format(curMonth, "MMMM, yyyy");
+  const textColor = "#add8e6";
+  const monthText = "November";
 
   const thisStyles = StyleSheet.create({
     container: {
@@ -193,7 +127,7 @@ const CalendarHeader = (props: any) => {
       flex: 1,
       marginBottom: 15,
     },
-    monthContainer: {
+    monthTextContainer: {
       flex: 1,
       marginBottom: 10,
     },
@@ -218,7 +152,7 @@ const CalendarHeader = (props: any) => {
   });
   return (
     <View style={thisStyles.container}>
-      <View style={thisStyles.monthContainer}>
+      <View style={thisStyles.monthTextContainer}>
         <Text style={thisStyles.month}>{monthText}</Text>
       </View>
       <View style={thisStyles.dayOfWeekContainer}>
@@ -234,7 +168,7 @@ const CalendarHeader = (props: any) => {
   );
 };
 
-const CalendarRow = (props: any) => {
+const CalendarWeek = (props: any) => {
   const week = props.week;
   const habit = props.habit;
   const thisStyles = StyleSheet.create({
@@ -247,25 +181,30 @@ const CalendarRow = (props: any) => {
   });
   return (
     <View style={thisStyles.container}>
-      <CalendarCell date={week[0]} habit={habit} />
-      <CalendarCell date={week[1]} habit={habit} />
-      <CalendarCell date={week[2]} habit={habit} />
-      <CalendarCell date={week[3]} habit={habit} />
-      <CalendarCell date={week[4]} habit={habit} />
-      <CalendarCell date={week[5]} habit={habit} />
-      <CalendarCell date={week[6]} habit={habit} />
+      <CalendarDay date={week[0]} habit={habit} />
+      <CalendarDay date={week[1]} habit={habit} />
+      <CalendarDay date={week[2]} habit={habit} />
+      <CalendarDay date={week[3]} habit={habit} />
+      <CalendarDay date={week[4]} habit={habit} />
+      <CalendarDay date={week[5]} habit={habit} />
+      <CalendarDay date={week[6]} habit={habit} />
     </View>
   );
 };
 
-const CalendarCell = (props: any) => {
+const CalendarDay = (props: any) => {
   const date = props.date;
   const habit = props.habit;
-  const dateCreated = new Date(habit.dateCreated);
-  const history = habit.history;
+  const dateCreated = new Date(habit.dateCreated); // TODO: change all of this
+  const timeline = habit.timeline;
   const habitColor = habit.habitColor;
   const day = date.getDate();
-  const done = count_times_done_on_date(history, date) > 0 ? true : false;
+  const done = count_times_done_on_date(timeline, date) > 0 ? true : false;
+
+  // modal for inserting coins
+
+  //redo
+  /** 
   const setTextColor = (date: Date, habitStartDate: Date) => {
     if (done) {
       return "white";
@@ -278,7 +217,8 @@ const CalendarCell = (props: any) => {
       return "black";
     }
   };
-  const textColor = setTextColor(date, dateCreated);
+  */
+  const textColor = "black";
 
   const thisStyles = StyleSheet.create({
     container: {
@@ -291,7 +231,7 @@ const CalendarCell = (props: any) => {
     innerContainer: {
       flex: 1,
       borderRadius: 5,
-      backgroundColor: done ? habitColor : "transparent",
+      backgroundColor: "transparent", //done ? habitColor : "transparent",
       justifyContent: "center",
       margin: 5,
     },
@@ -313,13 +253,19 @@ const CalendarCell = (props: any) => {
 const styles = StyleSheet.create({
   container: {
     //backgroundColor: "green",
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "#add8e6",
     flex: 1,
     opacity: 1,
     paddingTop: 30,
   },
+  container2: {
+    backgroundColor: "#D3D3D3",
+    flex: 1,
+    marginLeft: 20,
+    marginRight: 20,
+    marginTop: 50,
+    marginBottom: 50,
+  },
 });
 
 export default CalendarScreen;
-
-// helper functions

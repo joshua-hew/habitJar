@@ -41,6 +41,7 @@ const CreateBox = (state, { touches, screen }) => {
         body: body,
         size: [boxSize, boxSize],
         color: boxIds % 2 == 0 ? "pink" : "#B8E986",
+        nani: "nani",
         renderer: Box,
       };
       //console.log(state);

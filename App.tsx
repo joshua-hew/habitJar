@@ -9,10 +9,11 @@ import { Provider } from "react-redux";
 import HomeScreen from "./src/components/HomeScreen";
 import CreateHabitScreen from "./src/components/CreateHabitScreen";
 import EditHabitScreen from "./src/components/EditHabitScreen";
-import CalendarScreen from "./src/components/CalendarScreen";
+import CalendarScreen from "./src/screens/CalendarScreen";
 import { SimpleHabitList } from "./src/components/SimpleHabitList";
 import { Counter } from "./src/components/Counter";
 import { Game } from "./src/screens/MainScreen";
+import { SandboxScreen } from "./src/screens/Sandbox";
 
 const Stack = createStackNavigator();
 
@@ -22,30 +23,19 @@ const App = () => {
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen
+            name="Sandbox"
+            component={SandboxScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
             name="Main"
             component={Game}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="CreateHabit"
-            component={CreateHabitScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Home"
-            component={HomeScreen}
             options={{ headerShown: false }}
           />
           <Stack.Screen
             name="Calendar"
             component={CalendarScreen}
             options={{ headerShown: true }}
-          />
-
-          <Stack.Screen
-            name="EditHabit"
-            component={EditHabitScreen}
-            options={{ headerShown: false }}
           />
         </Stack.Navigator>
       </NavigationContainer>
@@ -61,3 +51,21 @@ const styles = StyleSheet.create({
 });
 
 export default App;
+
+/** 
+          <Stack.Screen
+            name="CreateHabit"
+            component={CreateHabitScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="EditHabit"
+            component={EditHabitScreen}
+            options={{ headerShown: false }}
+          />
+          */
