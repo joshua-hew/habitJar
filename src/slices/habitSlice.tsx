@@ -25,22 +25,7 @@ export const habitSlice = createSlice({
       console.log(`hey there! action.payload:`);
       console.log(action.payload);
 
-      const new_habit = action.payload;
-      const today = new Date().toString();
-      const initialHistory = [
-        {
-          date: today,
-          done: 0,
-        },
-      ];
-
-      // Add additional fields to habit object
-
-      new_habit["history"] = initialHistory;
-      new_habit["key"] = state.habits.length.toString(); // the habit's key will be its index in the habits []
-      new_habit["dateCreated"] = today;
-      new_habit["lastModified"] = ""; // intialize as "". Will hold a string Date
-      state.habits.push(action.payload);
+      // TODO: this
     },
     editHabit: (state, action) => {
       const modifiedHabit = action.payload;

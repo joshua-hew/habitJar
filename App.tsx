@@ -23,15 +23,16 @@ const App = () => {
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen
-            name="Sandbox"
-            component={SandboxScreen}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
             name="Main"
             component={Game}
             options={{ headerShown: false }}
           />
+          <Stack.Screen
+            name="Sandbox"
+            component={SandboxScreen}
+            options={{ headerShown: false }}
+          />
+
           <Stack.Screen
             name="Calendar"
             component={CalendarScreen}

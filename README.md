@@ -35,24 +35,32 @@ A habit app meant for focusing on building one really challenging habit, or brea
 
 Nov 6, Thursday
 
-1. calendar insert coin + tests
+1. ~~calendar insert coin + tests~~
 1. ~~calendar show coin count~~
-1. calendar remove coin + tests
+1. ~~calendar remove coin + tests~~
 
-Nov 7, Friday
+Nov 8, Saturday
 
-1. journal screen
-1. journal create
-1. journal edit
-
-... 3 weeks left
-
-1. home prompt user to create habit
+1. look up basic UI guideleines mobile
 1. create habit screen
+1. create habit reducer
+1. home prompt user to create habit
+
+Nov 9, Sunday
+
 1. edit habit screen
 1. edit habit change all
 1. edit habit change evolve
 1. edit habit delete
+
+... 3 weeks left
+
+1. stats screen
+1. stats current streak
+1. stats longest streak
+1. journal screen
+1. journal create
+1. journal edit
 1. home create jar
 1. home create coin
 1. home add coin
@@ -86,7 +94,8 @@ Nov 7, Friday
 1. coin sound when land
 1. home display current streak (daily | weekly | monthly | yearly)
 1. animated +1 when coin hits jar
-1. unified theme
+1. App UI have a reason behind UI decisions in future, basic guidelines of UI,
+1. App UI interweave theme of app into UI?
 1. coin icon - like webtoons icon
 1. stats animation that ascends to total current coin count
 1. calendar shows coin icon under days with activity
@@ -111,3 +120,16 @@ Nov 7, Friday
 1. premium different coins
 1. premium different background theme
 1. premium dark mode
+
+# Notes on mobile UI basics
+
+- navigation should be intuitive
+- experience / design should be the same across platforms ( mobile | web )
+- allow for personalization
+- good onboarding ( directions on init splashscreen )
+- use established gestures
+- targets' size should be finger appropriate
+- thumb zone
+- clear typographic hierarchy
+- implement transitions and animations
+- provide mobile and tactile feedback ( vibrate when add coin? | sound when coin hits jar? )
