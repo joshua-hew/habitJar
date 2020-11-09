@@ -82,7 +82,8 @@ const Game = (props: any) => {
   });
 
   //Matter.World.add(world, [body, floor]);
-  Matter.World.add(world, [...initialBodies, floor]);
+  //Matter.World.add(world, [...initialBodies, floor]);
+  Matter.World.add(world, [floor]);
   Matter.World.addConstraint(world, constraint);
 
   // Add initial entities to entities
@@ -96,9 +97,9 @@ const Game = (props: any) => {
     },
   };
 
-  for (let e of initialEntities) {
-    entities = Object.assign(e, entities);
-  }
+  //for (let e of initialEntities) {
+  //  entities = Object.assign(e, entities);
+  //}
 
   return (
     <GameEngine
@@ -129,9 +130,6 @@ const Game = (props: any) => {
       */
       entities={entities}
     >
-      <View style={{ backgroundColor: "blue", height: 200 }}>
-        <Text>Test Text</Text>
-      </View>
       <StatusBar hidden={true} />
     </GameEngine>
   );
