@@ -46,10 +46,10 @@ export const CreateHabitScreen = (props: any) => {
   const onSubmit = (formData: any, formErrors: any) => {
     // Todo: error msg for missing mandatory field
     console.log(formData);
-    /** 
+
     // Basic form validation
     // 1. Check for empty fields
-    const optionalFields = ["description", "msg"];
+    const optionalFields = ["description"];
     for (const [key, value] of Object.entries(formData)) {
       if (optionalFields.includes(key)) continue;
       if (value === "" || value === 0) {
@@ -68,9 +68,8 @@ export const CreateHabitScreen = (props: any) => {
 
     // Dispatch to store
     dispatch(createHabit(formData));
-    props.navigation.navigate("Home");
-*/
-    // Demo code
+
+    props.navigation.navigate("Sandbox");
     //props.navigation.navigate("Home");
   };
 
@@ -123,7 +122,8 @@ const Header = (props: any) => {
         <TouchableOpacity
           style={styles.cancelButton}
           onPress={() => {
-            props.navigation.navigate("Home");
+            //props.navigation.navigate("Home");
+            console.log("Haven't implemented cancel button yet");
           }}
         >
           <Text style={styles.cancelText}>Cancel</Text>

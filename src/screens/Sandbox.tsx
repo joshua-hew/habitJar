@@ -31,15 +31,33 @@ const SandboxScreen = (props: any) => {
   return (
     <View style={styles.container}>
       <Text>Sandbox</Text>
-      <TouchableOpacity onPress={() => dispatch(createTestHabit())}>
+
+      <TouchableOpacity
+        style={styles.testButton}
+        onPress={() => dispatch(createTestHabit())}
+      >
         <Text>Create test habit</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => dispatch(increment(today.toString()))}>
+
+      <TouchableOpacity
+        style={styles.testButton}
+        onPress={() => dispatch(increment(today.toString()))}
+      >
         <Text>Increment habit for {today.toString()}</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => props.navigation.navigate("Calendar")}>
+      <TouchableOpacity
+        style={styles.testButton}
+        onPress={() => props.navigation.navigate("Calendar")}
+      >
         <Text>CalendarScreen</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.testButton}
+        onPress={() => props.navigation.navigate("CreateHabit")}
+      >
+        <Text>CreateHabitScreen</Text>
       </TouchableOpacity>
     </View>
   );
@@ -50,6 +68,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  testButton: {
+    margin: 10,
   },
 });
 

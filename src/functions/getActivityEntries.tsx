@@ -1,5 +1,5 @@
-import { activity_entry, segment } from "../interfaces/interfaces";
-import { isBefore, isAfter, isEqual, isSameDay } from "date-fns";
+import { segment } from "../interfaces/interfaces";
+import { isSameDay } from "date-fns";
 import getIndexOfSegment from "../functions/getIndexOfSegment";
 
 const getActivityEntries = (t: segment[], d: Date) => {

@@ -33,27 +33,24 @@ A habit app meant for focusing on building one really challenging habit, or brea
 
 # Todo (mvp):
 
-Nov 6, Thursday
+Nov 5, Thursday
 
 1. ~~calendar insert coin + tests~~
 1. ~~calendar show coin count~~
 1. ~~calendar remove coin + tests~~
 
-Nov 8, Saturday
+... 3 weeks left
 
-1. look up basic UI guideleines mobile
-1. create habit screen
-1. create habit reducer
-1. home prompt user to create habit
+Nov 9, Monday
 
-Nov 9, Sunday
+1. ~~look up basic UI guideleines mobile~~
+1. ~~create habit screen~~
+1. ~~create habit reducer~~
 
 1. edit habit screen
 1. edit habit change all
 1. edit habit change evolve
 1. edit habit delete
-
-... 3 weeks left
 
 1. stats screen
 1. stats current streak
@@ -61,6 +58,7 @@ Nov 9, Sunday
 1. journal screen
 1. journal create
 1. journal edit
+1. home prompt user to create habit
 1. home create jar
 1. home create coin
 1. home add coin
@@ -84,11 +82,14 @@ Nov 9, Sunday
 - push notification well formed habit
 - push notification when in danger of losing habit, suggest to scale down
 - forgiveness coin
+- habitSlice createHabit reducer test
 
 # 100 UI improvements
 
 1. app prevent orientation change (statusbar moves)
 1. create habit (?) help, tips modal
+1. create habit error modal if there are mandatory fields that aren't filled out
+1. create habit color animation fills screen when color is selected. white shadow for text?
 1. edit habit (?) change all, evolve
 1. edit whenever editing, a modal pops up (edit habit, calendar, journal)
 1. coin sound when land

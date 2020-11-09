@@ -8,6 +8,7 @@ import {
   startOfYear,
   endOfYear,
   compareAsc,
+  startOfDay,
 } from "date-fns";
 import { habit, segment } from "../interfaces/interfaces";
 import { insert } from "../functions/insert";
@@ -22,29 +23,35 @@ export const habitSlice = createSlice({
   },
   reducers: {
     createHabit: (state, action) => {
-      console.log(`hey there! action.payload:`);
-      console.log(action.payload);
-
-      // TODO: this
+      const habitFormData = action.payload;
+      const beginningOfToday = startOfDay(new Date()).toString();
+      const newHabit: habit = {
+        dateCreated: beginningOfToday,
+        timeline: [
+          {
+            startDate: beginningOfToday,
+            endDate: undefined,
+            name: habitFormData.name,
+            description: habitFormData.description,
+            goal: habitFormData.goal,
+            timePeriod: habitFormData.timePeriod,
+            color: habitFormData.habitColor,
+            activityLog: [], // empty on purpose
+          },
+        ],
+      };
+      console.log(newHabit);
+      state.habits.push(newHabit);
     },
     editHabit: (state, action) => {
-      const modifiedHabit = action.payload;
-      const originalHabit = state.habits[modifiedHabit.habitIndex];
-      const today = new Date().toString();
+      //const modifiedHabit = action.payload;
+      //const originalHabit = state.habits[modifiedHabit.habitIndex];
+      //const today = new Date().toString();
 
-      modifiedHabit["lastModified"] = today;
-      Object.assign(originalHabit, modifiedHabit);
+      console.log("editHabit not yet implemented yet");
     },
     deleteHabit: (state, action) => {
-      const habitIndex = Number(action.payload);
-      state.habits.splice(habitIndex, 1);
-
-      // re-assign keys
-      const reassignKeys = (value: any, index: number, array: []) => {
-        value["key"] = index.toString();
-        return value;
-      };
-      state.habits = state.habits.map(reassignKeys);
+      console.log("deleteHabit not yet implemented yet");
     },
     increment: (state, action) => {
       // action.payload:
