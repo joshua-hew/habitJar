@@ -9,48 +9,49 @@ import {
   View,
   TextInput,
   Alert,
+  Modal,
+  TouchableHighlight,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export const EditHabitScreen = (props: any) => {
   const habit = useSelector(selectHabit); // Will have to change impementation for multiple habits
-  console.log(habit);
+  const currentSegment = habit.timeline[habit.timeline.length - 1];
+
+  console.log("curSeg", currentSegment);
 
   // Redux methods
   const dispatch = useDispatch();
 
   // Form state
-  const [name, setName] = React.useState(habit.name);
-  const [description, setDescription] = React.useState(habit.description);
-  const [timePeriod, setTimePeriod] = React.useState(habit.timePeriod);
-  const [goal, setGoal] = React.useState(habit.goal);
-  const [habitColor, setHabitColor] = React.useState(habit.habitColor);
-  const [reminders, setReminders] = React.useState("");
-  const [msg, onChangeMsg] = React.useState(habit.msg);
+  const [name, setName] = React.useState(currentSegment.name);
+  const [description, setDescription] = React.useState(
+    currentSegment.description
+  );
+  const [timePeriod, setTimePeriod] = React.useState(currentSegment.timePeriod);
+  const [goal, setGoal] = React.useState(currentSegment.goal);
+  const [habitColor, setHabitColor] = React.useState(currentSegment.habitColor);
 
   // Errors (will be populated when invalid input is discovered)
   const [nameError, setNameError] = React.useState("");
   const [descriptionError, setDescriptionError] = React.useState("");
   const [goalError, setGoalError] = React.useState("");
-  const [msgError, setMsgError] = React.useState("");
 
   const data = {
-    // TODO: add reminders
     name,
     description,
     timePeriod,
     goal,
     habitColor,
-    msg,
-    habitIndex,
   };
 
   const errors = {
     nameError,
     descriptionError,
     goalError,
-    msgError,
   };
+
+  const [saveModalVisible, setSaveModalVisible] = useState(false);
 
   const onSubmit = (formData: any, formErrors: any) => {
     // Todo: error msg for missing mandatory field
@@ -82,6 +83,10 @@ export const EditHabitScreen = (props: any) => {
   return (
     <KeyboardAwareScrollView style={styles.scrollViewContainer}>
       <View style={styles.container}>
+        <SaveModal
+          saveModalVisible={saveModalVisible}
+          setSaveModalVisible={setSaveModalVisible}
+        />
         <Header
           preLoadedOnSubmit={() => onSubmit(data, errors)}
           navigation={props.navigation}
@@ -107,14 +112,7 @@ export const EditHabitScreen = (props: any) => {
           setGoalError={setGoalError}
         />
         <HabitColor habitColor={habitColor} setHabitColor={setHabitColor} />
-        <Reminders />
-        <MotivationalMsg
-          msg={msg}
-          onChangeMsg={onChangeMsg}
-          msgError={msgError}
-          setMsgError={setMsgError}
-        />
-        <Footer habitIndex={habitIndex} navigation={props.navigation} />
+        <Footer navigation={props.navigation} />
       </View>
     </KeyboardAwareScrollView>
   );
@@ -132,7 +130,8 @@ const Header = (props: any) => {
         <TouchableOpacity
           style={styles.cancelButton}
           onPress={() => {
-            props.navigation.navigate("Home");
+            props.navigation.navigate("Sandbox");
+            //props.navigation.navigate("Home");
           }}
         >
           <Text style={styles.cancelText}>Cancel</Text>
@@ -430,58 +429,6 @@ const ColorSquare = (props: colorSquareProps) => {
   );
 };
 
-const Reminders = (props: any) => {
-  return (
-    <View style={styles.fieldContainer}>
-      <Text style={styles.fieldTitle}>Reminders</Text>
-      <View>
-        <Text>None</Text>
-      </View>
-    </View>
-  );
-};
-
-const MotivationalMsg = (props: any) => {
-  const msg = props.msg;
-  const onChangeMsg = props.onChangeMsg;
-  const msgError = props.msgError;
-  const setMsgError = props.setMsgError;
-  const msgErrorExists: boolean = msgError !== "";
-  const charLimit = 200;
-
-  const onChangeText = (text: string) => {
-    // if user input is too long, do not updatefield.
-    if (text.length > charLimit) {
-      setMsgError(`Motivational Message cannot exceed ${charLimit} characters`);
-    }
-
-    // if the input text is valid, clear the error (if exists) and update field
-    else {
-      if (msgErrorExists) setMsgError("");
-      onChangeMsg(text);
-    }
-  };
-
-  return (
-    <View style={styles.fieldContainer}>
-      <Text style={styles.fieldTitle}>Motivational Message</Text>
-      <View>
-        <TextInput
-          style={styles.motivationalMsgField}
-          onChangeText={(text) => onChangeText(text)}
-          value={msg}
-          multiline={true}
-        ></TextInput>
-      </View>
-      <View>
-        {msgErrorExists ? (
-          <Text style={styles.errorText}>{msgError}</Text>
-        ) : null}
-      </View>
-    </View>
-  );
-};
-
 const Footer = (props: any) => {
   const habitIndex = props.habitIndex;
   const dispatch = useDispatch();
@@ -511,6 +458,97 @@ const Footer = (props: any) => {
         <Text>Delete</Text>
       </TouchableOpacity>
     </View>
+  );
+};
+
+const SaveModal = (props: any) => {
+  const saveModalVisible = props.saveModalVisible;
+  const setSaveModalVisible = props.setSaveModalVisible;
+
+  const changeAll = () => {
+    console.log("change all");
+  };
+
+  const changeGoingForward = () => {
+    console.log("change going forward");
+  };
+
+  const modalStyles = StyleSheet.create({
+    centeredView: {
+      // the full screen-ish container that contains the modal
+      //backgroundColor: "black",
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      marginTop: 22,
+    },
+    modalView: {
+      margin: 20,
+      backgroundColor: "white",
+      borderRadius: 20,
+      padding: 35,
+      alignItems: "center",
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+      elevation: 5,
+    },
+    openButton: {
+      backgroundColor: "#F194FF",
+      borderRadius: 20,
+      padding: 10,
+      elevation: 2,
+    },
+    textStyle: {
+      color: "white",
+      fontWeight: "bold",
+      textAlign: "center",
+    },
+    modalText: {
+      marginBottom: 15,
+      textAlign: "center",
+    },
+  });
+
+  return (
+    <Modal animationType="slide" transparent={true} visible={saveModalVisible}>
+      <View style={modalStyles.centeredView}>
+        <View style={modalStyles.modalView}>
+          <Text style={modalStyles.modalText}> Apply Changes? </Text>
+
+          <TouchableHighlight
+            style={{ ...modalStyles.openButton, backgroundColor: "#2196F3" }}
+            onPress={() => {
+              changeAll();
+            }}
+          >
+            <Text style={modalStyles.textStyle}>Change All</Text>
+          </TouchableHighlight>
+
+          <TouchableHighlight
+            style={{ ...modalStyles.openButton, backgroundColor: "#2196F3" }}
+            onPress={() => {
+              changeGoingForward();
+            }}
+          >
+            <Text style={modalStyles.textStyle}>Remove Coin</Text>
+          </TouchableHighlight>
+
+          <TouchableHighlight
+            style={{ ...modalStyles.openButton, backgroundColor: "#2196F3" }}
+            onPress={() => {
+              setSaveModalVisible(!saveModalVisible);
+            }}
+          >
+            <Text style={modalStyles.textStyle}>Cancel</Text>
+          </TouchableHighlight>
+        </View>
+      </View>
+    </Modal>
   );
 };
 

@@ -9,6 +9,7 @@ import { Provider } from "react-redux";
 
 import CalendarScreen from "./src/screens/CalendarScreen";
 import CreateHabitScreen from "./src/screens/CreateHabitScreen";
+import EditHabitScreen from "./src/screens/EditHabitScreen";
 import { Game } from "./src/screens/MainScreen";
 import { SandboxScreen } from "./src/screens/Sandbox";
 
@@ -40,6 +41,12 @@ const App = () => {
           <Stack.Screen
             name="CreateHabit"
             component={CreateHabitScreen}
+            options={{ headerShown: false }}
+          />
+
+          <Stack.Screen
+            name="EditHabit"
+            component={EditHabitScreen}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
