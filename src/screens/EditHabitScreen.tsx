@@ -16,8 +16,9 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 
 export const EditHabitScreen = (props: any) => {
   const habit = useSelector(selectHabit); // Will have to change impementation for multiple habits
-  const currentSegment = habit.timeline[habit.timeline.length - 1];
+  console.log(habit);
 
+  let currentSegment = habit.timeline[habit.timeline.length - 1];
   console.log("curSeg", currentSegment);
 
   // Redux methods
@@ -77,7 +78,7 @@ export const EditHabitScreen = (props: any) => {
     }
 
     // Dispatch to store
-    dispatch(editHabit(formData));
+    setSaveModalVisible(true);
   };
 
   return (
@@ -430,15 +431,17 @@ const ColorSquare = (props: colorSquareProps) => {
 };
 
 const Footer = (props: any) => {
-  const habitIndex = props.habitIndex;
+  const navigation = props.navigation;
   const dispatch = useDispatch();
 
   const onConfirmDeletePress = () => {
-    dispatch(deleteHabit(habitIndex));
-    props.navigation.navigate("Home");
+    //dispatch(deleteHabit());
+    console.log("delete is bugged");
+    navigation.goBack();
+    console.log("this should not be printing");
   };
 
-  const confirmDeleteAlert = (habitIndex: string) => {
+  const confirmDeleteAlert = () => {
     Alert.alert("Confirm Delete?", undefined, [
       { text: "Delete", onPress: onConfirmDeletePress },
       {
@@ -453,7 +456,7 @@ const Footer = (props: any) => {
     <View style={styles.footerContainer}>
       <TouchableOpacity
         style={styles.deleteButton}
-        onPress={() => confirmDeleteAlert(habitIndex)}
+        onPress={() => confirmDeleteAlert()}
       >
         <Text>Delete</Text>
       </TouchableOpacity>
@@ -464,13 +467,19 @@ const Footer = (props: any) => {
 const SaveModal = (props: any) => {
   const saveModalVisible = props.saveModalVisible;
   const setSaveModalVisible = props.setSaveModalVisible;
+  const formData = props.formData;
+  const dispatch = useDispatch();
 
   const changeAll = () => {
     console.log("change all");
+    const payload = { ...formData, option: "changeAll" };
+    dispatch(editHabit(payload));
   };
 
   const changeGoingForward = () => {
     console.log("change going forward");
+    const payload = { ...formData, option: "changeGoingForward" };
+    dispatch(editHabit(payload));
   };
 
   const modalStyles = StyleSheet.create({

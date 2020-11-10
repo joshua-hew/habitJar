@@ -55,7 +55,10 @@ const SandboxScreen = (props: any) => {
 
       <TouchableOpacity
         style={styles.testButton}
-        onPress={() => props.navigation.navigate("CreateHabit")}
+        onPress={() => {
+          props.navigation.navigate("CreateHabit");
+          console.log("this should not be printing either");
+        }}
       >
         <Text>CreateHabitScreen</Text>
       </TouchableOpacity>
