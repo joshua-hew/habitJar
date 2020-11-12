@@ -19,7 +19,6 @@ export const EditHabitScreen = (props: any) => {
   console.log(habit);
 
   let currentSegment = habit.timeline[habit.timeline.length - 1];
-  console.log("curSeg", currentSegment);
 
   // Redux methods
   const dispatch = useDispatch();
@@ -31,7 +30,7 @@ export const EditHabitScreen = (props: any) => {
   );
   const [timePeriod, setTimePeriod] = React.useState(currentSegment.timePeriod);
   const [goal, setGoal] = React.useState(currentSegment.goal);
-  const [habitColor, setHabitColor] = React.useState(currentSegment.habitColor);
+  const [habitColor, setHabitColor] = React.useState(currentSegment.color);
 
   // Errors (will be populated when invalid input is discovered)
   const [nameError, setNameError] = React.useState("");
@@ -85,8 +84,10 @@ export const EditHabitScreen = (props: any) => {
     <KeyboardAwareScrollView style={styles.scrollViewContainer}>
       <View style={styles.container}>
         <SaveModal
+          formData={data}
           saveModalVisible={saveModalVisible}
           setSaveModalVisible={setSaveModalVisible}
+          navigation={props.navigation}
         />
         <Header
           preLoadedOnSubmit={() => onSubmit(data, errors)}
@@ -452,11 +453,18 @@ const Footer = (props: any) => {
     ]);
   };
 
+  const fuckthis = () => {
+    console.log("delete is bugged");
+    navigation.goBack();
+    console.log("this should not be printing");
+  };
+
   return (
     <View style={styles.footerContainer}>
       <TouchableOpacity
         style={styles.deleteButton}
-        onPress={() => confirmDeleteAlert()}
+        //onPress={() => confirmDeleteAlert()}
+        onPress={() => fuckthis()}
       >
         <Text>Delete</Text>
       </TouchableOpacity>
@@ -465,21 +473,24 @@ const Footer = (props: any) => {
 };
 
 const SaveModal = (props: any) => {
+  const formData = props.formData;
   const saveModalVisible = props.saveModalVisible;
   const setSaveModalVisible = props.setSaveModalVisible;
-  const formData = props.formData;
+  const navigation = props.navigation;
   const dispatch = useDispatch();
 
   const changeAll = () => {
     console.log("change all");
-    const payload = { ...formData, option: "changeAll" };
+    const payload = [formData, "changeAll"];
     dispatch(editHabit(payload));
+    navigation.navigate("Sandbox"); // TODO change
   };
 
   const changeGoingForward = () => {
     console.log("change going forward");
-    const payload = { ...formData, option: "changeGoingForward" };
+    const payload = [formData, "changeGoingForward"];
     dispatch(editHabit(payload));
+    navigation.navigate("Sandbox"); // TODO change
   };
 
   const modalStyles = StyleSheet.create({
@@ -544,7 +555,7 @@ const SaveModal = (props: any) => {
               changeGoingForward();
             }}
           >
-            <Text style={modalStyles.textStyle}>Remove Coin</Text>
+            <Text style={modalStyles.textStyle}>Change Going Forward</Text>
           </TouchableHighlight>
 
           <TouchableHighlight

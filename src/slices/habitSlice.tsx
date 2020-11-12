@@ -9,11 +9,13 @@ import {
   endOfYear,
   compareAsc,
   startOfDay,
+  endOfYesterday,
 } from "date-fns";
 import { habit, segment } from "../interfaces/interfaces";
-import { insert } from "../functions/insert";
 import { testHabit2 } from "../functions/testHabits";
+import { insert } from "../functions/insert";
 import removeActivityEntry from "../functions/removeActivityEntry";
+import { endOfDay } from "date-fns/esm";
 
 // TODO: create interface for habits array
 
@@ -45,11 +47,58 @@ export const habitSlice = createSlice({
       state.habits.push(newHabit);
     },
     editHabit: (state, action) => {
-      //const modifiedHabit = action.payload;
-      //const originalHabit = state.habits[modifiedHabit.habitIndex];
-      //const today = new Date().toString();
-      console.log(action.payload);
-      console.log("editHabit not yet implemented yet");
+      // action.payload = [formData, option]
+
+      const [formData, option] = action.payload;
+
+      console.log(formData, option);
+
+      const habit = state.habits[0];
+      if (option === "changeAll") {
+        for (let seg of habit.timeline) {
+          seg.name = formData.name;
+          seg.description = formData.description;
+          seg.goal = formData.goal;
+          seg.timePeriod = formData.timePeriod;
+          seg.color = formData.habitColor;
+        }
+      } else if (option === "changeGoingForward") {
+        const currentSegmentStartDate = new Date(
+          habit.timeline[habit.timeline.length - 1].startDate
+        );
+        if (isSameDay(new Date(), currentSegmentStartDate)) {
+          const currentSegment = habit.timeline[habit.timeline.length - 1];
+          currentSegment.name = formData.name;
+          currentSegment.description = formData.description;
+          currentSegment.goal = formData.goal;
+          currentSegment.timePeriod = formData.timePeriod;
+          currentSegment.color = formData.habitColor;
+        } else {
+          // end current segment
+          habit.timeline[
+            habit.timeline.length - 1
+          ].endDate = endOfYesterday().toString();
+
+          // check if today is sameday as current segment start date, just update values for segment
+          console.log("editHabit NEED to Implement");
+
+          // create a new segment
+          const newSegment: segment = {
+            startDate: startOfDay(new Date()).toString(),
+            endDate: undefined,
+            name: formData.name,
+            description: formData.description,
+            goal: formData.goal,
+            timePeriod: formData.timePeriod,
+            color: formData.habitColor,
+            activityLog: [],
+          };
+          habit.timeline.push(newSegment);
+
+          // check that activity log entries for each segment is valid
+          console.log("Activity log check Not Implemented Yet");
+        }
+      }
     },
     deleteHabit: (state) => {
       state.habits = [];

@@ -47,10 +47,9 @@ Nov 9, Monday
 1. ~~create habit screen~~
 1. ~~create habit reducer~~
 
-1. edit habit screen
-1. edit habit change all
-1. edit habit change evolve
-1. edit habit delete
+1. ~~edit habit screen~~
+1. edit habit change all + tests
+1. edit habit change going forward + tests
 
 1. stats screen
 1. stats current streak
@@ -65,6 +64,7 @@ Nov 9, Monday
 1. home undo ?
 1. home calculate streak
 1. home week sidebar
+1. edit habit delete (bugged)
 1. async storage.save habit
 1. deploy test version
 
@@ -75,6 +75,7 @@ Nov 9, Monday
 - filled jar
 - additional habits
 - archive habits
+- edit habit check that activity log entries for each segment is valid. make tests
 - create habit create reminder
 - edit create reminder
 - edit change reminder
@@ -83,6 +84,7 @@ Nov 9, Monday
 - push notification when in danger of losing habit, suggest to scale down
 - forgiveness coin
 - habitSlice createHabit reducer test
+- refactor code, make reusable components (after UI done)
 
 # 100 UI improvements
 
@@ -90,7 +92,8 @@ Nov 9, Monday
 1. create habit (?) help, tips modal
 1. create habit error modal if there are mandatory fields that aren't filled out
 1. create habit color animation fills screen when color is selected. white shadow for text?
-1. edit habit (?) change all, evolve
+1. edit habit change save modal to buttons (save all, save going forward / evolve) on screen with (?) besides them
+1. edit habit (?) creates modal for change all, evolve (pictures of what happens)
 1. edit whenever editing, a modal pops up (edit habit, calendar, journal)
 1. coin sound when land
 1. home display current streak (daily | weekly | monthly | yearly)
