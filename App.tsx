@@ -10,6 +10,7 @@ import { Provider } from "react-redux";
 import CalendarScreen from "./src/screens/CalendarScreen";
 import CreateHabitScreen from "./src/screens/CreateHabitScreen";
 import EditHabitScreen from "./src/screens/EditHabitScreen";
+import JournalScreen from "./src/screens/JournalScreen";
 import { Game } from "./src/screens/MainScreen";
 import { SandboxScreen } from "./src/screens/Sandbox";
 
