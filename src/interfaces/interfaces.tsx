@@ -21,3 +21,10 @@ export interface activity_entry {
   done: number; // range: [0, goal]
 }
 // test that "edit" on same day does not set end date to endOfYesterday
+
+export interface journalEntry {
+  title: string;
+  body: string;
+  dateCreated: string;
+  lastModified: string;
+}

@@ -108,7 +108,11 @@ Nov 9, Monday
 1. calendar add habitColor to background of date header in modal
 1. calendar display buttons horizontally in modal
 1. calendar resize touchable opacity for calendar days
-1. reshape calendar?
+1. calendar reshape height and width
+1. journal choose fontsize and wieght for body
+1. journal fix color of delete button
+1. journal format date display
+1. journal fix long titles and long bodies in flatlist.
 1. blur background of modal
 1. splash screen
 1. calendar highlights in lower opacity on active days not apart of current month

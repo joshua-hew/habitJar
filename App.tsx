@@ -11,6 +11,8 @@ import CalendarScreen from "./src/screens/CalendarScreen";
 import CreateHabitScreen from "./src/screens/CreateHabitScreen";
 import EditHabitScreen from "./src/screens/EditHabitScreen";
 import JournalScreen from "./src/screens/JournalScreen";
+import NewNoteScreen from "./src/screens/NewNoteScreen";
+import EditNoteScreen from "./src/screens/EditNoteScreen";
 import { Game } from "./src/screens/MainScreen";
 import { SandboxScreen } from "./src/screens/Sandbox";
 
@@ -49,6 +51,22 @@ const App = () => {
             name="EditHabit"
             component={EditHabitScreen}
             options={{ headerShown: false }}
+          />
+
+          <Stack.Screen
+            name="Journal"
+            component={JournalScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="New Note"
+            component={NewNoteScreen}
+            options={{ headerShown: true }}
+          />
+          <Stack.Screen
+            name="Edit Note"
+            component={EditNoteScreen}
+            options={{ headerShown: true }}
           />
         </Stack.Navigator>
       </NavigationContainer>
