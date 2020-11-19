@@ -11,7 +11,7 @@ import {
   startOfDay,
   endOfYesterday,
 } from "date-fns";
-import { habit, segment } from "../interfaces/interfaces";
+import { habit, journalEntry, segment } from "../interfaces/interfaces";
 import { testHabit2 } from "../functions/testHabits";
 import { insert } from "../functions/insert";
 import removeActivityEntry from "../functions/removeActivityEntry";
@@ -23,6 +23,7 @@ export const habitSlice = createSlice({
   name: "habit",
   initialState: {
     habits: [] as any,
+    journal: [] as any,
   },
   reducers: {
     createHabit: (state, action) => {
@@ -123,6 +124,19 @@ export const habitSlice = createSlice({
       state.habits = [testHabit2];
       console.log("testHabit2 created");
     },
+    createJournalEntry: (state, action) => {
+      const payload = action.payload;
+      state.journal.push(payload);
+    },
+    editJournalEntry: (state, action) => {
+      const editedJournalEntry: journalEntry = action.payload.editedNote;
+      const index = action.payload.index;
+      state.journal[index] = editedJournalEntry;
+    },
+    deleteJournalEntry: (state, action) => {
+      const index = action.payload;
+      state.journal.splice(index, 1);
+    },
   },
 });
 
@@ -133,9 +147,13 @@ export const {
   increment,
   decrement,
   createTestHabit,
+  createJournalEntry,
+  editJournalEntry,
+  deleteJournalEntry,
 } = habitSlice.actions;
 
 export default habitSlice.reducer;
 
 export const selectHabit = (state: any) => state.habits.habits[0];
 export const selectHabits = (state: any) => state.habits.habits;
+export const selectJournal = (state: any) => state.habits.journal;

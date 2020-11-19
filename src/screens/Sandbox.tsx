@@ -69,6 +69,13 @@ const SandboxScreen = (props: any) => {
       >
         <Text>EditHabitScreen</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.testButton}
+        onPress={() => props.navigation.navigate("Journal")}
+      >
+        <Text>Journal</Text>
+      </TouchableOpacity>
     </View>
   );
 };
