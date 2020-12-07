@@ -12,7 +12,7 @@ import {
   endOfYesterday,
 } from "date-fns";
 import { habit, journalEntry, segment } from "../interfaces/interfaces";
-import { testHabit2 } from "../functions/testHabits";
+import { testHabit1, testHabit2 } from "../functions/testHabits";
 import { insert } from "../functions/insert";
 import removeActivityEntry from "../functions/removeActivityEntry";
 import { endOfDay } from "date-fns/esm";
@@ -31,6 +31,7 @@ export const habitSlice = createSlice({
       const beginningOfToday = startOfDay(new Date()).toString();
       const newHabit: habit = {
         dateCreated: beginningOfToday,
+        key: state.habits.length.toString(),
         timeline: [
           {
             startDate: beginningOfToday,
@@ -44,17 +45,14 @@ export const habitSlice = createSlice({
           },
         ],
       };
-      console.log(newHabit);
       state.habits.push(newHabit);
     },
     editHabit: (state, action) => {
-      // action.payload = [formData, option]
-
-      const [formData, option] = action.payload;
+      const [formData, option, index] = action.payload;
 
       console.log(formData, option);
 
-      const habit = state.habits[0];
+      const habit = state.habits[index];
       if (option === "changeAll") {
         for (let seg of habit.timeline) {
           seg.name = formData.name;
@@ -80,9 +78,6 @@ export const habitSlice = createSlice({
             habit.timeline.length - 1
           ].endDate = endOfYesterday().toString();
 
-          // check if today is sameday as current segment start date, just update values for segment
-          console.log("editHabit NEED to Implement");
-
           // create a new segment
           const newSegment: segment = {
             startDate: startOfDay(new Date()).toString(),
@@ -101,8 +96,9 @@ export const habitSlice = createSlice({
         }
       }
     },
-    deleteHabit: (state) => {
-      state.habits = [];
+    deleteHabit: (state, action) => {
+      const index = action.payload;
+      state.habits.splice(index, 1);
     },
     increment: (state, action) => {
       // action.payload:
@@ -111,6 +107,20 @@ export const habitSlice = createSlice({
       const oldTimeline: segment[] = state.habits[0].timeline;
       const newTimeline: segment[] = insert(oldTimeline, date);
       state.habits[0].timeline = newTimeline;
+    },
+    markComplete: (state, action) => {
+      const date = new Date(action.payload.date); // arg
+      const index = action.payload.index; // arg
+      const habit = state.habits[index];
+      const newTimeline: segment[] = insert(habit.timeline, date);
+      habit.timeline = newTimeline;
+    },
+    markIncomplete: (state, action) => {
+      const date = new Date(action.payload.date); // arg
+      const index = action.payload.index; // arg
+      const habit = state.habits[index];
+      const newTimeline: segment[] = removeActivityEntry(habit.timeline, date);
+      habit.timeline = newTimeline;
     },
     decrement: (state, action) => {
       // action.payload:
@@ -121,8 +131,10 @@ export const habitSlice = createSlice({
       state.habits[0].timeline = newTimeline;
     },
     createTestHabit: (state) => {
-      state.habits = [testHabit2];
-      console.log("testHabit2 created");
+      testHabit2.key = state.habits.length.toString();
+      state.habits.push(testHabit2);
+      testHabit1.key = state.habits.length.toString();
+      state.habits.push(testHabit1);
     },
     createJournalEntry: (state, action) => {
       const payload = action.payload;
@@ -146,6 +158,8 @@ export const {
   deleteHabit,
   increment,
   decrement,
+  markComplete,
+  markIncomplete,
   createTestHabit,
   createJournalEntry,
   editJournalEntry,

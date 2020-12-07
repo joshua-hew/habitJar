@@ -3,6 +3,7 @@
 export interface habit {
   dateCreated: string; // should be beginning of day (ex: Mon Nov 02 2020 00:00:00 GMT-0500 (Eastern Standard Time))
   timeline: segment[];
+  key: string;
 }
 
 export interface segment {

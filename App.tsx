@@ -13,8 +13,8 @@ import EditHabitScreen from "./src/screens/EditHabitScreen";
 import JournalScreen from "./src/screens/JournalScreen";
 import NewNoteScreen from "./src/screens/NewNoteScreen";
 import EditNoteScreen from "./src/screens/EditNoteScreen";
-import { Game } from "./src/screens/MainScreen";
 import { SandboxScreen } from "./src/screens/Sandbox";
+import HomeScreen from "./src/screens/HomeScreen";
 
 const Stack = createStackNavigator();
 
@@ -30,15 +30,15 @@ const App = () => {
           />
 
           <Stack.Screen
-            name="Main"
-            component={Game}
+            name="Home"
+            component={HomeScreen}
             options={{ headerShown: false }}
           />
 
           <Stack.Screen
             name="Calendar"
             component={CalendarScreen}
-            options={{ headerShown: true }}
+            options={{ headerShown: false }}
           />
 
           <Stack.Screen

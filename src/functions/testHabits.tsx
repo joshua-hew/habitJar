@@ -4,13 +4,14 @@ const dateCreated = new Date(2020, 9, 25, 0, 0, 0).toString();
 
 export const testHabit2: habit = {
   dateCreated: dateCreated,
+  key: "no key",
   timeline: [
     {
       startDate: dateCreated, // Oct 25, (beg of Sun)
       endDate: new Date(2020, 9, 31, 23, 59, 59, 999).toString(), // Oct 31, (end of Sat)
-      name: "Wake Up before 8 AM",
-      description: "Show my sincerity",
-      goal: 5,
+      name: "Go for a run",
+      description: "Current distance: 2 miles",
+      goal: 3,
       timePeriod: "Weekly",
       color: "#D0021B",
       activityLog: [
@@ -39,9 +40,9 @@ export const testHabit2: habit = {
     {
       startDate: new Date(2020, 10, 1, 0, 0, 0).toString(), // Nov 1, (beg of Sun)
       endDate: undefined,
-      name: "Wake Up before 8 AM",
-      description: "Show my sincerity. Going strong",
-      goal: 5,
+      name: "Go for a run",
+      description: "Current distance: 2 miles",
+      goal: 3,
       timePeriod: "Weekly",
       color: "#D0021B",
       activityLog: [
@@ -73,6 +74,26 @@ export const testHabit2: habit = {
           date: new Date(2020, 10, 10, 0, 0, 0).toString(),
           done: 1,
         },
+        {
+          date: new Date(2020, 10, 16, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 10, 17, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 10, 18, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 10, 19, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 10, 20, 0, 0, 0).toString(),
+          done: 1,
+        },
       ],
     },
   ],
@@ -80,35 +101,36 @@ export const testHabit2: habit = {
 
 export const testHabit1: habit = {
   dateCreated: dateCreated,
+  key: "no key",
   timeline: [
     {
       startDate: dateCreated, // Oct 25, (beg of Sun)
       endDate: new Date(2020, 9, 31, 23, 59, 59, 999).toString(), // Oct 31, (end of Sat)
-      name: "",
-      description: "",
-      goal: 0,
-      timePeriod: "",
-      color: "",
+      name: "Meditate",
+      description: "Get the right mindset for the day",
+      goal: 1,
+      timePeriod: "Daily",
+      color: "#8B572A",
       activityLog: [], // empty on purpose
     },
     {
       startDate: new Date(2020, 10, 1, 0, 0, 0).toString(), // Nov 1, (beg of Sun)
       endDate: new Date(2020, 10, 1, 23, 59, 59, 999).toString(), // Nov 1, (end of Sun)
-      name: "",
-      description: "",
-      goal: 0,
-      timePeriod: "",
-      color: "",
+      name: "Meditate",
+      description: "Get the right mindset for the day. Changed 1",
+      goal: 1,
+      timePeriod: "Daily",
+      color: "#8B572A",
       activityLog: [],
     },
     {
       startDate: new Date(2020, 10, 2, 0, 0, 0).toString(), // Nov 2, (beg of Mon) (today)
       endDate: undefined,
-      name: "",
-      description: "",
-      goal: 0,
-      timePeriod: "",
-      color: "",
+      name: "Meditate",
+      description: "Get the right mindset for the day. Changed 2",
+      goal: 1,
+      timePeriod: "Daily",
+      color: "#8B572A",
       activityLog: [
         {
           date: new Date(2020, 10, 2, 14, 30, 0).toString(), // Nov 2, 2:30 pm

@@ -1,6 +1,10 @@
 import React, { Component, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { selectHabit, increment, decrement } from "../slices/habitSlice";
+import {
+  selectHabits,
+  markComplete,
+  markIncomplete,
+} from "../slices/habitSlice";
 import {
   StyleSheet,
   Text,
@@ -33,47 +37,51 @@ import {
   isBefore,
   isAfter,
 } from "date-fns";
+import Navbar from "../components/Navbar";
 import getDaysOfCalendarMonth from "../functions/getDaysOfCalendarMonth";
 import getActivityEntries from "../functions/getActivityEntries";
 import count_times_done_on_date from "../functions/count_times_done_on_date";
+import hexToRGB from "../functions/hexToRGB";
 
 const CalendarScreen = (props: any) => {
-  const habit = useSelector(selectHabit);
+  const habits = useSelector(selectHabits);
   const dispatch = useDispatch();
-  const [year, setYear] = useState(new Date().getFullYear());
 
-  // Change hardcoded month to dynamic later
   return (
     <View style={styles.container}>
-      <Title year={year} />
-      <View style={styles.container2}>
-        <CalendarMonth habit={habit} year={year} month={10} />
+      <View style={styles.screenTitleContainer}>
+        <Text style={styles.screenTitleText}>Calendar</Text>
       </View>
+
+      <FlatList
+        data={habits}
+        renderItem={({ item, index }) => (
+          <CalendarMonth habit={item} index={index} />
+        )}
+        keyExtractor={(item) => item.key}
+        ItemSeparatorComponent={ItemSeperator}
+      />
+      <Navbar navigation={props.navigation} />
     </View>
   );
 };
 
-const Title = (props: any) => {
-  const year = props.year;
-  const titleStyles = StyleSheet.create({
-    container: {},
-    yearText: {
-      fontSize: 24,
+const ItemSeperator = (props: any) => {
+  const myStyles = StyleSheet.create({
+    itemSeperator: {
+      marginTop: 7,
+      marginBottom: 7,
     },
   });
-  return (
-    <View>
-      <Text style={titleStyles.yearText}>{year}</Text>
-    </View>
-  );
+  return <View style={myStyles.itemSeperator}></View>;
 };
 
 const CalendarMonth = (props: any) => {
   const habit = props.habit;
-  const year = props.year;
-  const month = props.month;
+  const [cmDate, setcmDate] = useState(new Date());
+  const year = cmDate.getFullYear();
+  const month = cmDate.getMonth();
   const today = new Date();
-  console.log(habit);
 
   const calendarDates: Date[] = getDaysOfCalendarMonth(month, year);
   const weeks = [
@@ -86,7 +94,7 @@ const CalendarMonth = (props: any) => {
   ];
 
   const rows = [
-    <CalendarHeader key="header" month={month} habit={habit} />,
+    <CalendarHeader key="header" month={month} year={year} habit={habit} />,
     <CalendarWeek key="0" week={weeks[0]} habit={habit} />,
     <CalendarWeek key="1" week={weeks[1]} habit={habit} />,
     <CalendarWeek key="2" week={weeks[2]} habit={habit} />,
@@ -123,14 +131,26 @@ const CalendarMonth = (props: any) => {
 };
 
 const CalendarHeader = (props: any) => {
+  const month = props.month;
+  const year = props.year;
+  const habit = props.habit;
+  const date = new Date(year, month);
   const textColor = "#add8e6";
-  const monthText = "November";
+  const headerText = format(date, "MMMM yyyy");
+  const name = habit.timeline[habit.timeline.length - 1].name;
 
   const thisStyles = StyleSheet.create({
     container: {
       //backgroundColor: "blue",
       flex: 1,
       marginBottom: 15,
+    },
+    habitName: {
+      fontSize: 24,
+      fontWeight: "bold",
+      marginTop: 10,
+      marginBottom: 25,
+      textAlign: "center",
     },
     monthTextContainer: {
       flex: 1,
@@ -157,8 +177,9 @@ const CalendarHeader = (props: any) => {
   });
   return (
     <View style={thisStyles.container}>
+      <Text style={thisStyles.habitName}>{name}</Text>
       <View style={thisStyles.monthTextContainer}>
-        <Text style={thisStyles.month}>{monthText}</Text>
+        <Text style={thisStyles.month}>{headerText}</Text>
       </View>
       <View style={thisStyles.dayOfWeekContainer}>
         <Text style={thisStyles.dayOfWeek}>Sun</Text>
@@ -200,45 +221,49 @@ const CalendarWeek = (props: any) => {
 const CalendarDay = (props: any) => {
   const date = props.date;
   const habit = props.habit;
-  const dateCreated = new Date(habit.dateCreated); // TODO: change all of this
+  const index = Number(habit.key); // temporary solution. supposed to be passed as prop
   const timeline = habit.timeline;
-  const habitColor = habit.habitColor;
+  const habitColor = habit.timeline[habit.timeline.length - 1].color;
   const day = date.getDate();
-  const activityEntries = getActivityEntries(timeline, date); // important
+  //const activityEntries = getActivityEntries(timeline, date); // important
+
+  const doneToday =
+    count_times_done_on_date(habit.timeline, date) > 0 ? true : false;
 
   // modal for inserting coins
   const [modalVisible, setModalVisible] = useState(false);
 
-  //redo
-  /** 
-  const setTextColor = (date: Date, habitStartDate: Date) => {
-    if (done) {
-      return "white";
-    } else if (
-      (isBefore(date, habitStartDate) || isAfter(date, new Date())) &&
-      !isSameDay(date, new Date())
-    ) {
-      return "gray";
-    } else {
-      return "black";
-    }
-  };
-  */
-  const textColor = "black";
   const dispatch = useDispatch();
 
-  const addCoin = (date: Date) => {
-    dispatch(increment(date.toString()));
+  const onPressTodo = (date: Date) => {
+    const payload = { date: date.toString(), index: index };
+    dispatch(markComplete(payload));
   };
 
-  const removeCoin = (date: Date) => {
-    dispatch(decrement(date.toString()));
+  const onPressDone = (date: Date) => {
+    const payload = { date: date.toString(), index: index };
+    dispatch(markIncomplete(payload));
+  };
+
+  const determineTextColor = () => {
+    if (isBefore(date, startOfMonth(new Date()))) return "gray";
+    if (isAfter(date, new Date())) return "gray";
+    if (doneToday) return "white";
+    return "black";
+  };
+  const textColor = determineTextColor();
+
+  const determineBackgroundColor = () => {
+    if (!doneToday) return "transparent";
+    if (isBefore(date, startOfMonth(new Date())) && doneToday)
+      return hexToRGB(habitColor, 0.5);
+    if (isAfter(date, new Date()) && doneToday)
+      return hexToRGB(habitColor, 0.5);
+    if (doneToday) return habitColor;
   };
 
   const thisStyles = StyleSheet.create({
     container: {
-      //borderColor: "black",
-      //borderWidth: 1,
       flex: 1,
       justifyContent: "center",
       height: 40,
@@ -246,40 +271,46 @@ const CalendarDay = (props: any) => {
     innerContainer: {
       flex: 1,
       borderRadius: 5,
-      backgroundColor: "transparent", //done ? habitColor : "transparent",
+      borderColor: "black",
+      borderWidth: isSameDay(date, new Date()) ? 3 : 0,
+      backgroundColor: determineBackgroundColor(),
       justifyContent: "center",
       margin: 5,
     },
     day: {
       color: textColor,
-      fontWeight: "bold",
+      //fontWeight: "bold",
       textAlign: "center",
     },
   });
+
   return (
     <View style={thisStyles.container}>
       <Modal animationType="slide" transparent={true} visible={modalVisible}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>{format(date, "EEE, MMM do")}</Text>
-            <Text>{activityEntries.length}</Text>
-            <TouchableHighlight
-              style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-              onPress={() => {
-                addCoin(date);
-              }}
-            >
-              <Text style={styles.textStyle}>Add Coin</Text>
-            </TouchableHighlight>
+            <Text>{doneToday ? 1 : 0}</Text>
 
-            <TouchableHighlight
-              style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-              onPress={() => {
-                removeCoin(date);
-              }}
-            >
-              <Text style={styles.textStyle}>Remove Coin</Text>
-            </TouchableHighlight>
+            {doneToday ? (
+              <TouchableHighlight
+                style={styles.markIncompleteButton}
+                onPress={() => {
+                  onPressDone(date);
+                }}
+              >
+                <Text style={styles.textStyle}>Mark Incomplete</Text>
+              </TouchableHighlight>
+            ) : (
+              <TouchableHighlight
+                style={styles.markCompleteButton}
+                onPress={() => {
+                  onPressTodo(date);
+                }}
+              >
+                <Text style={styles.textStyle}>Mark Complete</Text>
+              </TouchableHighlight>
+            )}
 
             <TouchableHighlight
               style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
@@ -305,11 +336,13 @@ const CalendarDay = (props: any) => {
 const styles = StyleSheet.create({
   container: {
     //backgroundColor: "green",
-    backgroundColor: "#add8e6",
+    //backgroundColor: "#add8e6",
     flex: 1,
     opacity: 1,
     paddingTop: 30,
+    paddingBottom: 20,
   },
+
   container2: {
     backgroundColor: "#D3D3D3",
     flex: 1,
@@ -317,6 +350,16 @@ const styles = StyleSheet.create({
     marginRight: 20,
     marginTop: 50,
     marginBottom: 50,
+  },
+  screenTitleContainer: {
+    marginTop: 20,
+    marginBottom: 10,
+    marginLeft: 20,
+  },
+  screenTitleText: {
+    fontSize: 30,
+    fontWeight: "bold",
+    letterSpacing: 1.5,
   },
   centeredView: {
     // the full screen-ish container that contains the modal
@@ -343,6 +386,18 @@ const styles = StyleSheet.create({
   },
   openButton: {
     backgroundColor: "#F194FF",
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  markCompleteButton: {
+    backgroundColor: "#2196F3",
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  markIncompleteButton: {
+    backgroundColor: "#2196F3",
     borderRadius: 20,
     padding: 10,
     elevation: 2,

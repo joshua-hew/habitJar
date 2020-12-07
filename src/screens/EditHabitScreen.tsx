@@ -15,8 +15,9 @@ import {
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export const EditHabitScreen = (props: any) => {
-  const habit = useSelector(selectHabit); // Will have to change impementation for multiple habits
-  console.log(habit);
+  //console.log(props);
+  const habit = props.route.params.habit;
+  const index = props.route.params.index;
 
   let currentSegment = habit.timeline[habit.timeline.length - 1];
 
@@ -85,6 +86,7 @@ export const EditHabitScreen = (props: any) => {
       <View style={styles.container}>
         <SaveModal
           formData={data}
+          index={index}
           saveModalVisible={saveModalVisible}
           setSaveModalVisible={setSaveModalVisible}
           navigation={props.navigation}
@@ -132,8 +134,8 @@ const Header = (props: any) => {
         <TouchableOpacity
           style={styles.cancelButton}
           onPress={() => {
-            props.navigation.navigate("Sandbox");
-            //props.navigation.navigate("Home");
+            //props.navigation.navigate("Sandbox");
+            props.navigation.navigate("Home");
           }}
         >
           <Text style={styles.cancelText}>Cancel</Text>
@@ -474,6 +476,7 @@ const Footer = (props: any) => {
 
 const SaveModal = (props: any) => {
   const formData = props.formData;
+  const index = props.index;
   const saveModalVisible = props.saveModalVisible;
   const setSaveModalVisible = props.setSaveModalVisible;
   const navigation = props.navigation;
@@ -481,16 +484,16 @@ const SaveModal = (props: any) => {
 
   const changeAll = () => {
     console.log("change all");
-    const payload = [formData, "changeAll"];
+    const payload = [formData, "changeAll", index];
     dispatch(editHabit(payload));
-    navigation.navigate("Sandbox"); // TODO change
+    navigation.navigate("Home"); // TODO change
   };
 
   const changeGoingForward = () => {
     console.log("change going forward");
-    const payload = [formData, "changeGoingForward"];
+    const payload = [formData, "changeGoingForward", index];
     dispatch(editHabit(payload));
-    navigation.navigate("Sandbox"); // TODO change
+    navigation.navigate("Home"); // TODO change
   };
 
   const modalStyles = StyleSheet.create({

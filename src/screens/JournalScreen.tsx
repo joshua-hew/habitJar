@@ -22,6 +22,7 @@ import {
   format,
 } from "date-fns";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Navbar from "../components/Navbar";
 
 export const JournalScreen = (props: any) => {
   const dispatch = useDispatch();
@@ -37,12 +38,13 @@ export const JournalScreen = (props: any) => {
   ];
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.headerContainer}>
+    <View style={styles.container}>
+      <View style={styles.screenTitleContainer}>
         <Text style={styles.screenTitle}>Journal</Text>
       </View>
 
       <FlatList
+        style={styles.flatlist}
         data={journal}
         renderItem={({ item, index }) => (
           <Item
@@ -61,7 +63,9 @@ export const JournalScreen = (props: any) => {
       >
         <Text style={styles.textStyle}>New Note</Text>
       </TouchableHighlight>
-    </SafeAreaView>
+
+      <Navbar navigation={props.navigation} />
+    </View>
   );
 };
 
@@ -79,7 +83,9 @@ const Item = (props: any) => {
         <View>
           <Text style={styles.itemTitle}>{journalEntry.title}</Text>
           <View style={styles.itemDateContainer}>
-            <Text style={styles.itemDate}>{journalEntry.dateCreated}</Text>
+            <Text style={styles.itemDate}>
+              {format(new Date(journalEntry.dateCreated), "MMMM do y EEE p")}
+            </Text>
           </View>
           <Text>{journalEntry.body}</Text>
         </View>
@@ -95,20 +101,31 @@ const ItemSeperator = (props: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 15,
+    paddingLeft: 15,
+    paddingRight: 15,
+    paddingTop: 40,
+    paddingBottom: 20,
   },
-  headerContainer: {
-    marginBottom: 45,
+  screenTitleContainer: {
+    marginTop: 20,
+    marginBottom: 40,
   },
   screenTitle: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: "bold",
+  },
+  flatlist: {
+    backgroundColor: "white",
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 20,
   },
   itemTitle: {
     //fontWeight: "bold",
+    fontSize: 20,
   },
   itemDateContainer: {
-    marginBottom: 5,
+    marginBottom: 20,
   },
   itemDate: {
     fontWeight: "100",

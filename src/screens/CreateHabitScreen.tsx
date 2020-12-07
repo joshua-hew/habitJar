@@ -69,13 +69,13 @@ export const CreateHabitScreen = (props: any) => {
     // Dispatch to store
     dispatch(createHabit(formData));
 
-    props.navigation.navigate("Sandbox");
-    //props.navigation.navigate("Home");
+    //props.navigation.navigate("Sandbox");
+    props.navigation.navigate("Home");
   };
 
   return (
-    <KeyboardAwareScrollView style={styles.scrollViewContainer}>
-      <View style={styles.container}>
+    <View style={styles.container}>
+      <KeyboardAwareScrollView style={styles.scrollViewContainer}>
         <Header
           preLoadedOnSubmit={() => onSubmit(data, errors)}
           navigation={props.navigation}
@@ -101,8 +101,11 @@ export const CreateHabitScreen = (props: any) => {
           setGoalError={setGoalError}
         />
         <HabitColor habitColor={habitColor} setHabitColor={setHabitColor} />
-      </View>
-    </KeyboardAwareScrollView>
+        <View style={styles.paddingView}>
+          <Text></Text>
+        </View>
+      </KeyboardAwareScrollView>
+    </View>
   );
 };
 
@@ -122,8 +125,7 @@ const Header = (props: any) => {
         <TouchableOpacity
           style={styles.cancelButton}
           onPress={() => {
-            //props.navigation.navigate("Home");
-            console.log("Haven't implemented cancel button yet");
+            props.navigation.navigate("Home");
           }}
         >
           <Text style={styles.cancelText}>Cancel</Text>
@@ -435,17 +437,23 @@ const ColorSquare = (props: colorSquareProps) => {
 };
 
 const styles = StyleSheet.create({
-  scrollViewContainer: {
-    backgroundColor: "white",
-    flex: 1,
-  },
   container: {
     flex: 1,
-    paddingTop: 60,
+    backgroundColor: "white",
+    paddingBottom: 50,
+  },
+  scrollViewContainer: {
+    flex: 1,
+    backgroundColor: "white",
+    marginTop: 60,
     paddingLeft: 20,
     paddingRight: 20,
-    paddingBottom: 100,
   },
+  paddingView: {
+    margin: 40,
+    backgroundColor: "white",
+  },
+
   headerContainer: {
     backgroundColor: "white",
     flexDirection: "row",

@@ -47,7 +47,7 @@ export const NewNoteScreen = (props: any) => {
           value={title}
           onChangeText={(text) => setTitle(text)}
           placeholder={"Title"}
-          multiline={true}
+          multiline={false}
         />
       </View>
 

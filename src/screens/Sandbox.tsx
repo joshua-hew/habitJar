@@ -76,6 +76,13 @@ const SandboxScreen = (props: any) => {
       >
         <Text>Journal</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.testButton}
+        onPress={() => props.navigation.navigate("Home")}
+      >
+        <Text>Home</Text>
+      </TouchableOpacity>
     </View>
   );
 };
