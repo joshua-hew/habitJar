@@ -36,6 +36,8 @@ import {
   intervalToDuration,
   isBefore,
   isAfter,
+  sub,
+  add,
 } from "date-fns";
 import Navbar from "../components/Navbar";
 import getDaysOfCalendarMonth from "../functions/getDaysOfCalendarMonth";
@@ -78,7 +80,7 @@ const ItemSeperator = (props: any) => {
 
 const CalendarMonth = (props: any) => {
   const habit = props.habit;
-  const [cmDate, setcmDate] = useState(new Date());
+  const [cmDate, setcmDate] = useState(startOfMonth(new Date()));
   const year = cmDate.getFullYear();
   const month = cmDate.getMonth();
   const today = new Date();
@@ -94,13 +96,18 @@ const CalendarMonth = (props: any) => {
   ];
 
   const rows = [
-    <CalendarHeader key="header" month={month} year={year} habit={habit} />,
-    <CalendarWeek key="0" week={weeks[0]} habit={habit} />,
-    <CalendarWeek key="1" week={weeks[1]} habit={habit} />,
-    <CalendarWeek key="2" week={weeks[2]} habit={habit} />,
-    <CalendarWeek key="3" week={weeks[3]} habit={habit} />,
-    <CalendarWeek key="4" week={weeks[4]} habit={habit} />,
-    <CalendarWeek key="5" week={weeks[5]} habit={habit} />,
+    <CalendarHeader
+      key="header"
+      habit={habit}
+      cmDate={cmDate}
+      setcmDate={setcmDate}
+    />,
+    <CalendarWeek key="0" week={weeks[0]} habit={habit} cmDate={cmDate} />,
+    <CalendarWeek key="1" week={weeks[1]} habit={habit} cmDate={cmDate} />,
+    <CalendarWeek key="2" week={weeks[2]} habit={habit} cmDate={cmDate} />,
+    <CalendarWeek key="3" week={weeks[3]} habit={habit} cmDate={cmDate} />,
+    <CalendarWeek key="4" week={weeks[4]} habit={habit} cmDate={cmDate} />,
+    <CalendarWeek key="5" week={weeks[5]} habit={habit} cmDate={cmDate} />,
   ];
   const thisStyles = StyleSheet.create({
     container: {
@@ -131,13 +138,18 @@ const CalendarMonth = (props: any) => {
 };
 
 const CalendarHeader = (props: any) => {
-  const month = props.month;
-  const year = props.year;
+  const cmDate = props.cmDate;
+  const setcmDate = props.setcmDate;
+  const month = cmDate.getMonth();
+  const year = cmDate.getFullYear();
   const habit = props.habit;
   const date = new Date(year, month);
-  const textColor = "#add8e6";
+  const textColor = "rgba(65, 131, 215, 1)";
   const headerText = format(date, "MMMM yyyy");
   const name = habit.timeline[habit.timeline.length - 1].name;
+
+  const nextMonth = format(add(cmDate, { months: 1 }), "MMM");
+  const prevMonth = format(sub(cmDate, { months: 1 }), "MMM");
 
   const thisStyles = StyleSheet.create({
     container: {
@@ -154,6 +166,8 @@ const CalendarHeader = (props: any) => {
     },
     monthTextContainer: {
       flex: 1,
+      flexDirection: "row",
+      justifyContent: "space-around",
       marginBottom: 10,
     },
     month: {
@@ -174,12 +188,31 @@ const CalendarHeader = (props: any) => {
       fontWeight: "bold",
       fontSize: 16,
     },
+    prevNext: {
+      fontSize: 12,
+      color: "rgba(65, 131, 215, .7)",
+      marginTop: 3,
+    },
   });
   return (
     <View style={thisStyles.container}>
       <Text style={thisStyles.habitName}>{name}</Text>
       <View style={thisStyles.monthTextContainer}>
+        <TouchableOpacity
+          onPress={() => {
+            setcmDate(sub(cmDate, { months: 1 }));
+          }}
+        >
+          <Text style={thisStyles.prevNext}>{"<" + prevMonth}</Text>
+        </TouchableOpacity>
         <Text style={thisStyles.month}>{headerText}</Text>
+        <TouchableOpacity
+          onPress={() => {
+            setcmDate(add(cmDate, { months: 1 }));
+          }}
+        >
+          <Text style={thisStyles.prevNext}>{nextMonth + ">"}</Text>
+        </TouchableOpacity>
       </View>
       <View style={thisStyles.dayOfWeekContainer}>
         <Text style={thisStyles.dayOfWeek}>Sun</Text>
@@ -197,6 +230,7 @@ const CalendarHeader = (props: any) => {
 const CalendarWeek = (props: any) => {
   const week = props.week;
   const habit = props.habit;
+  const cmDate = props.cmDate;
   const thisStyles = StyleSheet.create({
     container: {
       //backgroundColor: props.color,
@@ -207,13 +241,13 @@ const CalendarWeek = (props: any) => {
   });
   return (
     <View style={thisStyles.container}>
-      <CalendarDay date={week[0]} habit={habit} />
-      <CalendarDay date={week[1]} habit={habit} />
-      <CalendarDay date={week[2]} habit={habit} />
-      <CalendarDay date={week[3]} habit={habit} />
-      <CalendarDay date={week[4]} habit={habit} />
-      <CalendarDay date={week[5]} habit={habit} />
-      <CalendarDay date={week[6]} habit={habit} />
+      <CalendarDay date={week[0]} habit={habit} cmDate={cmDate} />
+      <CalendarDay date={week[1]} habit={habit} cmDate={cmDate} />
+      <CalendarDay date={week[2]} habit={habit} cmDate={cmDate} />
+      <CalendarDay date={week[3]} habit={habit} cmDate={cmDate} />
+      <CalendarDay date={week[4]} habit={habit} cmDate={cmDate} />
+      <CalendarDay date={week[5]} habit={habit} cmDate={cmDate} />
+      <CalendarDay date={week[6]} habit={habit} cmDate={cmDate} />
     </View>
   );
 };
@@ -221,6 +255,7 @@ const CalendarWeek = (props: any) => {
 const CalendarDay = (props: any) => {
   const date = props.date;
   const habit = props.habit;
+  const cmDate = props.cmDate;
   const index = Number(habit.key); // temporary solution. supposed to be passed as prop
   const timeline = habit.timeline;
   const habitColor = habit.timeline[habit.timeline.length - 1].color;
@@ -246,18 +281,17 @@ const CalendarDay = (props: any) => {
   };
 
   const determineTextColor = () => {
-    if (isBefore(date, startOfMonth(new Date()))) return "gray";
-    if (isAfter(date, new Date())) return "gray";
     if (doneToday) return "white";
+    if (isBefore(date, cmDate)) return "gray";
+    if (isAfter(date, endOfMonth(cmDate))) return "gray";
     return "black";
   };
   const textColor = determineTextColor();
 
   const determineBackgroundColor = () => {
     if (!doneToday) return "transparent";
-    if (isBefore(date, startOfMonth(new Date())) && doneToday)
-      return hexToRGB(habitColor, 0.5);
-    if (isAfter(date, new Date()) && doneToday)
+    if (isBefore(date, cmDate) && doneToday) return hexToRGB(habitColor, 0.5);
+    if (isAfter(date, endOfMonth(cmDate)) && doneToday)
       return hexToRGB(habitColor, 0.5);
     if (doneToday) return habitColor;
   };

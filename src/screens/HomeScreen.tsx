@@ -4,6 +4,7 @@ import {
   selectHabits,
   markComplete,
   markIncomplete,
+  createTestHabit,
 } from "../slices/habitSlice";
 import {
   StyleSheet,
@@ -26,6 +27,7 @@ import { isBefore } from "date-fns";
 
 export const HomeScreen = (props: any) => {
   const habits = useSelector(selectHabits);
+  const dispatch = useDispatch();
   //console.log("habits", habits);
 
   const myStyles = StyleSheet.create({
@@ -34,6 +36,13 @@ export const HomeScreen = (props: any) => {
       borderRadius: 20,
       padding: 10,
       marginTop: 20,
+      elevation: 2,
+    },
+    demoButton: {
+      backgroundColor: "#2196F3",
+      borderRadius: 20,
+      padding: 10,
+      marginTop: 10,
       elevation: 2,
     },
     textStyle: {
@@ -63,6 +72,13 @@ export const HomeScreen = (props: any) => {
         onPress={() => props.navigation.navigate("CreateHabit")}
       >
         <Text style={myStyles.textStyle}>New Habit</Text>
+      </TouchableHighlight>
+
+      <TouchableHighlight
+        style={myStyles.demoButton}
+        onPress={() => dispatch(createTestHabit())}
+      >
+        <Text style={myStyles.textStyle}>Create Demo Habits</Text>
       </TouchableHighlight>
 
       <Navbar navigation={props.navigation} />
@@ -111,7 +127,11 @@ const Item = (props: any) => {
         <TouchableOpacity
           style={styles.itemMiddleAndRightButtonStyle}
           onPress={() => {
-            navigation.navigate("EditHabit", { habit, index });
+            navigation.navigate("HabitStats", {
+              habit,
+              index,
+              title: currentSegment.name,
+            });
           }}
         >
           <View style={styles.itemHorizontalMiddleSection}>

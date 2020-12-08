@@ -74,7 +74,7 @@ export const EditNoteScreen = (props: any) => {
 
       <View style={styles.buttonContainer}>
         <TouchableHighlight
-          style={styles.openButton}
+          style={{ ...styles.openButton, marginBottom: 15 }}
           onPress={() => {
             saveEditsToNote();
           }}

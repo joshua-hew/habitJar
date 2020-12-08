@@ -99,6 +99,9 @@ export const habitSlice = createSlice({
     deleteHabit: (state, action) => {
       const index = action.payload;
       state.habits.splice(index, 1);
+      state.habits.forEach((value: any, index: any) => {
+        value.key = index.toString();
+      });
     },
     increment: (state, action) => {
       // action.payload:

@@ -116,7 +116,7 @@ export const EditHabitScreen = (props: any) => {
           setGoalError={setGoalError}
         />
         <HabitColor habitColor={habitColor} setHabitColor={setHabitColor} />
-        <Footer navigation={props.navigation} />
+        <Footer navigation={props.navigation} index={index} />
       </View>
     </KeyboardAwareScrollView>
   );
@@ -435,16 +435,16 @@ const ColorSquare = (props: colorSquareProps) => {
 
 const Footer = (props: any) => {
   const navigation = props.navigation;
+  const index = props.index;
   const dispatch = useDispatch();
 
   const onConfirmDeletePress = () => {
-    //dispatch(deleteHabit());
-    console.log("delete is bugged");
-    navigation.goBack();
-    console.log("this should not be printing");
+    dispatch(deleteHabit({ index }));
+    navigation.navigate("Home");
+    //console.log("this should not be printing");
   };
 
-  const confirmDeleteAlert = () => {
+  const onPressDelete = () => {
     Alert.alert("Confirm Delete?", undefined, [
       { text: "Delete", onPress: onConfirmDeletePress },
       {
@@ -455,18 +455,12 @@ const Footer = (props: any) => {
     ]);
   };
 
-  const fuckthis = () => {
-    console.log("delete is bugged");
-    navigation.goBack();
-    console.log("this should not be printing");
-  };
-
   return (
     <View style={styles.footerContainer}>
       <TouchableOpacity
         style={styles.deleteButton}
         //onPress={() => confirmDeleteAlert()}
-        onPress={() => fuckthis()}
+        onPress={() => onPressDelete()}
       >
         <Text>Delete</Text>
       </TouchableOpacity>

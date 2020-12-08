@@ -13,8 +13,9 @@ import EditHabitScreen from "./src/screens/EditHabitScreen";
 import JournalScreen from "./src/screens/JournalScreen";
 import NewNoteScreen from "./src/screens/NewNoteScreen";
 import EditNoteScreen from "./src/screens/EditNoteScreen";
-import { SandboxScreen } from "./src/screens/Sandbox";
 import HomeScreen from "./src/screens/HomeScreen";
+import HabitStatsScreen from "./src/screens/HabitStatsScreen";
+import { SandboxScreen } from "./src/screens/Sandbox";
 
 const Stack = createStackNavigator();
 
@@ -33,6 +34,13 @@ const App = () => {
             name="Home"
             component={HomeScreen}
             options={{ headerShown: false }}
+          />
+
+          <Stack.Screen
+            name="HabitStats"
+            component={HabitStatsScreen}
+            //@ts-ignore
+            options={({ route }) => ({ title: route.params.title })}
           />
 
           <Stack.Screen
