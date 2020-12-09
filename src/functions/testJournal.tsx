@@ -1,6 +1,6 @@
 import { journalEntry } from "../interfaces/interfaces";
 
-const testJournal: journalEntry[] = [
+export const testJournal: journalEntry[] = [
   {
     title: "Finished Unit tests for increment",
     body:

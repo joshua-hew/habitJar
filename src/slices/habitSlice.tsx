@@ -134,10 +134,12 @@ export const habitSlice = createSlice({
       state.habits[0].timeline = newTimeline;
     },
     createTestHabit: (state) => {
+      console.log("create test habit called");
       testHabit2.key = state.habits.length.toString();
       state.habits.push(testHabit2);
       testHabit1.key = state.habits.length.toString();
       state.habits.push(testHabit1);
+      console.log(state);
     },
     createJournalEntry: (state, action) => {
       const payload = action.payload;

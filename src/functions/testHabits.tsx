@@ -52,10 +52,130 @@ export const testHabit2: habit = {
       description: "Do 4 hours Pomodoro.",
       goal: 5,
       timePeriod: "Weekly",
-      color: "#C71585",
+      color: "#7ED321",
       activityLog: [
         {
           date: new Date(2020, 9, 8, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 9, 10, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 9, 12, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 9, 13, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 9, 14, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 9, 15, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 9, 19, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 9, 20, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 9, 21, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 9, 22, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 9, 26, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 9, 27, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 9, 28, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 9, 30, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 9, 31, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 10, 2, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 10, 3, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 10, 4, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 10, 5, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 10, 9, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 10, 10, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 10, 2, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 10, 19, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 10, 20, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 11, 1, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 11, 2, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 11, 3, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 11, 4, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 11, 5, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 11, 7, 0, 0, 0).toString(),
+          done: 1,
+        },
+        {
+          date: new Date(2020, 11, 8, 0, 0, 0).toString(),
           done: 1,
         },
       ],

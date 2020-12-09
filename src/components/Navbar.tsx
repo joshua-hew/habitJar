@@ -13,10 +13,6 @@ const Navbar = (props: any) => {
 
   return (
     <View style={styles.container}>
-      <TouchableHighlight onPress={() => navigation.navigate("Sandbox")}>
-        <Text>Sandbox</Text>
-      </TouchableHighlight>
-
       <TouchableHighlight onPress={() => navigation.navigate("Home")}>
         <View style={styles.iconAndTextContainer}>
           <Image
@@ -73,3 +69,9 @@ const styles = StyleSheet.create({
 });
 
 export default Navbar;
+
+/**
+ * <TouchableHighlight onPress={() => navigation.navigate("Sandbox")}>
+        <Text>Sandbox</Text>
+      </TouchableHighlight>
+ */
